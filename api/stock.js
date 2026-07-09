@@ -1,7 +1,7 @@
 // api/stock.js
 // Vercel serverless API endpoint for Blake's stock dashboard.
 // Keeps FINNHUB_API_KEY private on Vercel.
-// Uses Finnhub first, then a Yahoo Finance quote fallback when Finnhub has no quote for a ticker.
+// Uses Finnhub first, then Yahoo chart fallback for quotes.
 
 export default async function handler(req, res) {
   const allowedOrigins = new Set([
@@ -39,17 +39,31 @@ export default async function handler(req, res) {
   const jsonFetch = async (url) => {
     const response = await fetch(url, {
       headers: {
-        "User-Agent": "Mozilla/5.0 stock-dashboard-lookup"
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+        Accept: "application/json,text/plain,*/*"
       }
     });
 
-    return response.json();
+    const text = await response.text();
+
+    try {
+      return JSON.parse(text);
+    } catch {
+      return {
+        error: "Non-JSON response",
+        status: response.status,
+        text: text.slice(0, 300)
+      };
+    }
   };
 
   const finnhubBase = "https://finnhub.io/api/v1";
 
   const finnhubUrl = (path) => {
-    return `${finnhubBase}${path}${path.includes("?") ? "&" : "?"}token=${encodeURIComponent(token)}`;
+    return `${finnhubBase}${path}${path.includes("?") ? "&" : "?"}token=${encodeURIComponent(
+      token
+    )}`;
   };
 
   async function getFinnhubData() {
@@ -68,38 +82,63 @@ export default async function handler(req, res) {
     };
   }
 
-  async function getYahooQuote() {
-    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbol)}`;
-    const data = await jsonFetch(url);
-    const item = data?.quoteResponse?.result?.[0];
+  async function getYahooChartQuote() {
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(
+      symbol
+    )}?interval=1d&range=5d`;
 
-    if (
-      !item ||
-      item.regularMarketPrice === undefined ||
-      item.regularMarketPrice === null
-    ) {
+    const data = await jsonFetch(url);
+    const result = data?.chart?.result?.[0];
+
+    if (!result || !result.meta) {
       return null;
     }
 
+    const meta = result.meta;
+    const quoteBlock = result.indicators?.quote?.[0] || {};
+    const closes = result.indicators?.quote?.[0]?.close || [];
+
+    const lastClose = [...closes].reverse().find((x) => typeof x === "number");
+
+    const current =
+      meta.regularMarketPrice ??
+      meta.postMarketPrice ??
+      meta.preMarketPrice ??
+      lastClose ??
+      null;
+
+    if (current === null || current === undefined || Number(current) <= 0) {
+      return null;
+    }
+
+    const previousClose = meta.previousClose ?? null;
+    const change =
+      previousClose && current ? Number(current) - Number(previousClose) : null;
+    const percentChange =
+      previousClose && current ? ((Number(current) / Number(previousClose)) - 1) * 100 : null;
+
     return {
-      company: item.longName || item.shortName || symbol,
-      exchange: item.fullExchangeName || item.exchange || "",
-      industry: item.quoteType || "",
+      company: meta.longName || meta.shortName || symbol,
+      exchange: meta.fullExchangeName || meta.exchangeName || meta.exchange || "",
+      industry: meta.instrumentType || "",
       quote: {
-        current: item.regularMarketPrice ?? null,
-        change: item.regularMarketChange ?? null,
-        percentChange: item.regularMarketChangePercent ?? null,
-        high: item.regularMarketDayHigh ?? null,
-        low: item.regularMarketDayLow ?? null,
-        open: item.regularMarketOpen ?? null,
-        previousClose: item.regularMarketPreviousClose ?? null
+        current,
+        change,
+        percentChange,
+        high: meta.regularMarketDayHigh ?? quoteBlock.high?.at?.(-1) ?? null,
+        low: meta.regularMarketDayLow ?? quoteBlock.low?.at?.(-1) ?? null,
+        open: meta.regularMarketOpen ?? quoteBlock.open?.at?.(-1) ?? null,
+        previousClose
       }
     };
   }
 
   async function getYahooAnalystFallback() {
     try {
-      const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(symbol)}?modules=recommendationTrend,financialData`;
+      const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(
+        symbol
+      )}?modules=recommendationTrend,financialData`;
+
       const data = await jsonFetch(url);
       const result = data?.quoteSummary?.result?.[0];
 
@@ -222,16 +261,20 @@ export default async function handler(req, res) {
     };
 
     if (!finnhubQuoteOk) {
-      const yahoo = await getYahooQuote();
+      const yahoo = await getYahooChartQuote();
 
       if (!yahoo) {
         return res.status(404).json({
           error: `No quote returned for ${symbol}. Check the ticker or provider coverage.`,
-          providerTried: ["Finnhub", "Yahoo Finance fallback"]
+          debug: {
+            finnhubQuote: finnhub.quote,
+            yahooFallback: "Yahoo chart endpoint returned no usable quote"
+          },
+          providerTried: ["Finnhub", "Yahoo chart fallback"]
         });
       }
 
-      quoteSource = "Yahoo Finance fallback";
+      quoteSource = "Yahoo chart fallback";
       company = yahoo.company || company;
       exchange = yahoo.exchange || exchange;
       industry = yahoo.industry || industry;
