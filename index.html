@@ -4,1080 +4,2108 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Blake's Long-Term Stock Dashboard</title>
-  <meta name="description" content="A clean long-term stock research dashboard for valuation, buy zones, and market reports." />
+  <meta name="description" content="Diversified client-ready stock research dashboard with sectors, valuation reasons, risks, catalysts, and portfolio fit." />
   <style>
     :root {
-      --bg: #070a12;
-      --panel: rgba(255, 255, 255, 0.075);
-      --panel-strong: rgba(255, 255, 255, 0.115);
-      --text: #f4f7fb;
-      --muted: #aab4c3;
-      --line: rgba(255, 255, 255, 0.12);
-      --green: #2ee59d;
-      --green-bg: rgba(46, 229, 157, 0.13);
-      --yellow: #ffd166;
-      --yellow-bg: rgba(255, 209, 102, 0.13);
-      --red: #ff6b6b;
-      --red-bg: rgba(255, 107, 107, 0.13);
-      --blue: #72a7ff;
-      --blue-bg: rgba(114, 167, 255, 0.13);
-      --purple: #b993ff;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
-      --radius: 22px;
-    }
-
-    * { box-sizing: border-box; }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(66, 135, 245, 0.22), transparent 34rem),
-        radial-gradient(circle at top right, rgba(46, 229, 157, 0.14), transparent 38rem),
-        linear-gradient(135deg, #070a12 0%, #0d1324 52%, #090d16 100%);
-      min-height: 100vh;
-    }
-
-    a { color: inherit; text-decoration: none; }
-
-    .page {
-      width: min(1240px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 28px 0 70px;
-    }
-
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 28px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      padding: 14px 0;
-      backdrop-filter: blur(18px);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-    }
-
-    .brand-mark {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, rgba(46,229,157,0.95), rgba(114,167,255,0.95));
-      color: #07101c;
-      font-weight: 900;
-      box-shadow: 0 12px 30px rgba(46, 229, 157, 0.18);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      font-size: 0.92rem;
-      padding: 9px 12px;
-      border: 1px solid transparent;
-      border-radius: 999px;
-    }
-
-    .nav-links a:hover {
-      color: var(--text);
-      border-color: var(--line);
-      background: rgba(255,255,255,0.06);
-    }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 32px;
-      padding: clamp(24px, 5vw, 46px);
-      background:
-        linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.04)),
-        radial-gradient(circle at 85% 10%, rgba(46,229,157,0.24), transparent 26rem);
-      box-shadow: var(--shadow);
-    }
-
-    .hero:before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-      background-size: 38px 38px;
-      mask-image: linear-gradient(110deg, rgba(0,0,0,0.45), transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-content {
-      position: relative;
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
-      gap: 28px;
-      align-items: end;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--green);
-      background: var(--green-bg);
-      border: 1px solid rgba(46,229,157,0.22);
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 0.86rem;
-      font-weight: 700;
-      margin-bottom: 18px;
-    }
-
-    h1 {
-      margin: 0 0 14px;
-      font-size: clamp(2.2rem, 6vw, 5rem);
-      line-height: 0.92;
-      letter-spacing: -0.075em;
-    }
-
-    .hero p {
-      margin: 0;
-      max-width: 760px;
-      color: var(--muted);
-      font-size: clamp(1rem, 2vw, 1.18rem);
-      line-height: 1.6;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 24px;
-    }
-
-    .btn {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.08);
-      color: var(--text);
-      padding: 12px 15px;
-      border-radius: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform 0.18s ease, background 0.18s ease, border 0.18s ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.13);
-      border-color: rgba(255,255,255,0.25);
-    }
-
-    .btn.primary {
-      color: #06111e;
-      background: linear-gradient(135deg, var(--green), var(--blue));
-      border-color: transparent;
-    }
-
-    .hero-card {
-      background: rgba(5, 9, 18, 0.58);
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 20px;
-      backdrop-filter: blur(14px);
-    }
-
-    .hero-card .label {
-      color: var(--muted);
-      font-size: 0.86rem;
-      margin-bottom: 8px;
-    }
-
-    .hero-card .big {
-      font-size: 2.25rem;
-      font-weight: 900;
-      letter-spacing: -0.055em;
-      margin-bottom: 8px;
-    }
-
-    .hero-card .small {
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 0.94rem;
-    }
-
-    .grid {
-      display: grid;
-      gap: 18px;
-    }
-
-    .summary-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      margin: 22px 0;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 19px;
-      box-shadow: 0 16px 42px rgba(0,0,0,0.16);
-      backdrop-filter: blur(16px);
-    }
-
-    .metric-label {
-      color: var(--muted);
-      font-size: 0.82rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 8px;
-    }
-
-    .metric-value {
-      font-size: clamp(1.32rem, 3vw, 1.95rem);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-    }
-
-    .metric-note {
-      margin-top: 7px;
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.45;
-    }
-
-    .section {
-      margin-top: 34px;
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 18px;
-      margin-bottom: 14px;
-    }
-
-    .section h2 {
-      margin: 0;
-      font-size: clamp(1.35rem, 3vw, 2rem);
-      letter-spacing: -0.05em;
-    }
-
-    .section-desc {
-      color: var(--muted);
-      max-width: 800px;
-      line-height: 1.6;
-      margin: 7px 0 0;
-    }
-
-    .filters {
-      display: flex;
-      gap: 9px;
-      flex-wrap: wrap;
-    }
-
-    .filter {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid var(--line);
-      color: var(--muted);
-      padding: 9px 12px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: 800;
-    }
-
-    .filter.active,
-    .filter:hover {
-      color: var(--text);
-      border-color: rgba(114,167,255,0.38);
-      background: var(--blue-bg);
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255,255,255,0.055);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 980px;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 15px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      vertical-align: top;
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 0.76rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      background: rgba(255,255,255,0.04);
-      position: sticky;
-      top: 0;
-    }
-
-    tbody tr:hover {
-      background: rgba(255,255,255,0.045);
-    }
-
-    .ticker {
-      font-weight: 950;
-      letter-spacing: -0.025em;
-      font-size: 1.05rem;
-    }
-
-    .company {
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-top: 3px;
-    }
-
-    .score {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 52px;
-      padding: 8px 10px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.08);
-      font-weight: 950;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 850;
-      white-space: nowrap;
-      border: 1px solid transparent;
-    }
-
-    .pill.undervalued {
-      color: var(--green);
-      background: var(--green-bg);
-      border-color: rgba(46,229,157,0.22);
-    }
-
-    .pill.fair {
-      color: var(--yellow);
-      background: var(--yellow-bg);
-      border-color: rgba(255,209,102,0.22);
-    }
-
-    .pill.overvalued {
-      color: var(--red);
-      background: var(--red-bg);
-      border-color: rgba(255,107,107,0.22);
-    }
-
-    .pill.watchlist,
-    .pill.core,
-    .pill.new {
-      color: var(--blue);
-      background: var(--blue-bg);
-      border-color: rgba(114,167,255,0.25);
-    }
-
-    .reason {
-      color: #dbe4ef;
-      line-height: 1.45;
-      max-width: 420px;
-    }
-
-    .muted {
-      color: var(--muted);
-    }
-
-    .chart-card {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 320px;
-      gap: 18px;
-      align-items: stretch;
-    }
-
-    .bars {
-      display: grid;
-      gap: 12px;
-      padding: 6px 0;
-    }
-
-    .bar-row {
-      display: grid;
-      grid-template-columns: 78px minmax(180px, 1fr) 52px;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .bar-name {
-      font-weight: 900;
-      color: #eaf0f7;
-    }
-
-    .bar-track {
-      height: 13px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .bar-fill {
-      height: 100%;
-      width: var(--w);
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--green), var(--blue), var(--purple));
-    }
-
-    .chart-note {
-      background: rgba(255,255,255,0.055);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px;
-      color: var(--muted);
-      line-height: 1.55;
-    }
-
-    .cards-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .stock-card {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stock-card:before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--green), var(--blue), var(--purple));
-    }
-
-    .stock-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 13px;
-    }
-
-    .stock-card h3 {
-      margin: 0 0 4px;
-      font-size: 1.25rem;
-      letter-spacing: -0.035em;
-    }
-
-    .stock-card p {
-      color: var(--muted);
-      line-height: 1.55;
-      margin: 0;
-    }
-
-    .mini-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin: 14px 0;
-    }
-
-    .mini {
-      background: rgba(255,255,255,0.055);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 14px;
-      padding: 11px;
-    }
-
-    .mini .k {
-      color: var(--muted);
-      font-size: 0.78rem;
-      margin-bottom: 4px;
-    }
-
-    .mini .v {
-      font-weight: 900;
-      letter-spacing: -0.02em;
-    }
-
-    .bullet-list {
-      margin: 14px 0 0;
-      padding: 0;
-      list-style: none;
-      display: grid;
-      gap: 9px;
-    }
-
-    .bullet-list li {
-      color: var(--muted);
-      line-height: 1.42;
-      display: grid;
-      grid-template-columns: 18px minmax(0, 1fr);
-      gap: 8px;
-    }
-
-    .bullet-list li:before {
-      content: "•";
-      color: var(--green);
-      font-weight: 900;
-    }
-
-    .method-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .method-card {
-      min-height: 152px;
-    }
-
-    .method-card .num {
-      width: 34px;
-      height: 34px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: var(--blue-bg);
-      color: var(--blue);
-      font-weight: 900;
-      margin-bottom: 12px;
-    }
-
-    .method-card h3 {
-      margin: 0 0 8px;
-      letter-spacing: -0.03em;
-    }
-
-    .method-card p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: 0.94rem;
-    }
-
-    .disclaimer {
-      color: var(--muted);
-      font-size: 0.88rem;
-      line-height: 1.55;
-      border-left: 3px solid rgba(114,167,255,0.65);
-    }
-
-    .footer {
-      margin-top: 36px;
-      padding-top: 22px;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    .hidden { display: none !important; }
-
-    @media (max-width: 1020px) {
-      .hero-content,
-      .chart-card {
-        grid-template-columns: 1fr;
-      }
-
-      .summary-grid,
-      .method-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .cards-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .nav {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .nav-links {
-        justify-content: flex-start;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .page {
-        width: min(100% - 22px, 1240px);
-        padding-top: 14px;
-      }
-
-      .summary-grid,
-      .cards-grid,
-      .method-grid,
-      .mini-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero {
-        border-radius: 24px;
-      }
-
-      .nav-links a {
-        padding: 8px 9px;
-      }
-
-      .bar-row {
-        grid-template-columns: 62px minmax(110px, 1fr) 42px;
-      }
-    }
+      --bg:#070a12; --bg2:#0d1324; --panel:rgba(255,255,255,.075); --panel2:rgba(255,255,255,.11); --text:#f4f7fb;
+      --muted:#aab4c3; --line:rgba(255,255,255,.12); --green:#2ee59d; --green-bg:rgba(46,229,157,.13);
+      --yellow:#ffd166; --yellow-bg:rgba(255,209,102,.13); --red:#ff6b6b; --red-bg:rgba(255,107,107,.13);
+      --blue:#72a7ff; --blue-bg:rgba(114,167,255,.13); --purple:#b993ff; --purple-bg:rgba(185,147,255,.13);
+      --shadow:0 24px 80px rgba(0,0,0,.35); --radius:22px; --radius-lg:32px;
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(circle at top left,rgba(66,135,245,.22),transparent 34rem),radial-gradient(circle at 90% 5%,rgba(46,229,157,.13),transparent 38rem),radial-gradient(circle at 45% 55%,rgba(185,147,255,.10),transparent 42rem),linear-gradient(135deg,var(--bg),var(--bg2) 52%,#090d16);min-height:100vh}
+    a{color:inherit;text-decoration:none} button,input,select{font:inherit} .page{width:min(1280px,calc(100% - 32px));margin:0 auto;padding:22px 0 70px}
+    .nav{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px;position:sticky;top:0;z-index:20;padding:12px 0;backdrop-filter:blur(18px)}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.04em} .brand-mark{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(46,229,157,.95),rgba(114,167,255,.95));color:#07101c;font-weight:950;box-shadow:0 12px 30px rgba(46,229,157,.18)}
+    .nav-links{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end} .nav-links a{color:var(--muted);font-size:.9rem;padding:9px 11px;border:1px solid transparent;border-radius:999px} .nav-links a:hover{color:var(--text);border-color:var(--line);background:rgba(255,255,255,.06)}
+    .hero{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:var(--radius-lg);padding:clamp(24px,5vw,46px);background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.04)),radial-gradient(circle at 85% 10%,rgba(46,229,157,.24),transparent 26rem);box-shadow:var(--shadow)}
+    .hero:before{content:"";position:absolute;inset:-2px;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(110deg,rgba(0,0,0,.45),transparent 70%);pointer-events:none}
+    .hero-content{position:relative;display:grid;grid-template-columns:minmax(0,1.18fr) minmax(330px,.82fr);gap:28px;align-items:end} .eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--green);background:var(--green-bg);border:1px solid rgba(46,229,157,.22);padding:8px 12px;border-radius:999px;font-size:.86rem;font-weight:800;margin-bottom:18px}
+    h1{margin:0 0 14px;font-size:clamp(2.25rem,6vw,5.2rem);line-height:.92;letter-spacing:-.078em} .hero p{margin:0;max-width:800px;color:var(--muted);font-size:clamp(1rem,2vw,1.18rem);line-height:1.6}
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px} .btn{border:1px solid var(--line);background:rgba(255,255,255,.08);color:var(--text);padding:12px 15px;border-radius:14px;font-weight:850;cursor:pointer;transition:transform .18s ease,background .18s ease,border .18s ease} .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.25)} .btn.primary{color:#06111e;background:linear-gradient(135deg,var(--green),var(--blue));border-color:transparent}
+    .hero-card{background:rgba(5,9,18,.58);border:1px solid var(--line);border-radius:24px;padding:20px;backdrop-filter:blur(14px)} .label,.metric-label{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;font-weight:900;margin-bottom:8px} .big{font-size:2.25rem;font-weight:950;letter-spacing:-.055em;margin-bottom:8px} .small,.metric-note{color:var(--muted);line-height:1.45;font-size:.94rem} .hero-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px} .hero-meta div{border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.055);border-radius:16px;padding:12px} .hero-meta span{display:block;color:var(--muted);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;font-weight:900;margin-bottom:4px}
+    .grid{display:grid;gap:18px} .summary-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin:22px 0} .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:19px;box-shadow:0 16px 42px rgba(0,0,0,.16);backdrop-filter:blur(16px)} .metric-value{font-size:clamp(1.32rem,3vw,1.95rem);font-weight:950;letter-spacing:-.045em}
+    .section{margin-top:34px} .section-head{display:flex;justify-content:space-between;align-items:end;gap:18px;margin-bottom:14px} .section h2{margin:0;font-size:clamp(1.35rem,3vw,2rem);letter-spacing:-.05em} .section-desc{color:var(--muted);max-width:880px;line-height:1.6;margin:7px 0 0}
+    .two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:stretch} .exec-card,.stock-card{position:relative;overflow:hidden} .exec-card:before,.stock-card:before{content:"";position:absolute;inset:0;height:4px;background:linear-gradient(90deg,var(--green),var(--blue),var(--purple))} .exec-list{list-style:none;padding:0;margin:0;display:grid;gap:12px} .exec-list li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;color:var(--muted);line-height:1.5} .exec-list b{color:var(--text)} .exec-list .icon{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:var(--blue-bg);color:var(--blue);font-weight:950}
+    .filters{display:flex;gap:9px;flex-wrap:wrap} .filter{background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--muted);padding:9px 12px;border-radius:999px;cursor:pointer;font-weight:850} .filter.active,.filter:hover{color:var(--text);border-color:rgba(114,167,255,.38);background:var(--blue-bg)} .search-box{width:min(360px,100%);background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:14px;outline:none}
+    .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.055)} table{width:100%;border-collapse:collapse;min-width:1120px} th,td{text-align:left;padding:15px 16px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top} th{color:var(--muted);font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;background:rgba(255,255,255,.04);position:sticky;top:0} tbody tr:hover{background:rgba(255,255,255,.045)}
+    .ticker{font-weight:950;letter-spacing:-.025em;font-size:1.05rem} .company{color:var(--muted);font-size:.85rem;margin-top:3px} .score{display:inline-flex;align-items:center;justify-content:center;min-width:52px;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.08);font-weight:950} .pill{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;font-size:.8rem;font-weight:850;white-space:nowrap;border:1px solid transparent} .pill.undervalued{color:var(--green);background:var(--green-bg);border-color:rgba(46,229,157,.22)} .pill.fair{color:var(--yellow);background:var(--yellow-bg);border-color:rgba(255,209,102,.22)} .pill.overvalued{color:var(--red);background:var(--red-bg);border-color:rgba(255,107,107,.22)} .pill.core,.pill.universe,.pill.low,.pill.medium,.pill.high{color:var(--blue);background:var(--blue-bg);border-color:rgba(114,167,255,.25)} .pill.low{color:var(--green);background:var(--green-bg);border-color:rgba(46,229,157,.22)} .pill.medium{color:var(--yellow);background:var(--yellow-bg);border-color:rgba(255,209,102,.22)} .pill.high{color:var(--red);background:var(--red-bg);border-color:rgba(255,107,107,.22)} .reason{color:#dbe4ef;line-height:1.45;max-width:440px} .muted{color:var(--muted)}
+    .cards-grid{grid-template-columns:repeat(3,minmax(0,1fr))} .sector-grid{grid-template-columns:repeat(4,minmax(0,1fr))} .sector-card h3{margin:0 0 8px;letter-spacing:-.03em} .sector-card p{margin:0;color:var(--muted);line-height:1.5;font-size:.92rem}
+    .chart-card{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;align-items:stretch} .bars{display:grid;gap:12px;padding:6px 0} .bar-row{display:grid;grid-template-columns:82px minmax(180px,1fr) 52px;gap:12px;align-items:center} .bar-name{font-weight:950;color:#eaf0f7} .bar-track{height:13px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.06)} .bar-fill{height:100%;width:var(--w);border-radius:999px;background:linear-gradient(90deg,var(--green),var(--blue),var(--purple))} .chart-note{background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:18px;padding:16px;color:var(--muted);line-height:1.55}
+    .stock-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:13px} .stock-card h3{margin:0 0 4px;font-size:1.25rem;letter-spacing:-.035em} .stock-card p{color:var(--muted);line-height:1.55;margin:0} .mini-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0} .mini{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:11px} .mini .k{color:var(--muted);font-size:.76rem;margin-bottom:4px;text-transform:uppercase;letter-spacing:.07em;font-weight:850} .mini .v{font-weight:900;letter-spacing:-.02em} .bullet-list{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:9px} .bullet-list li{color:var(--muted);line-height:1.42;display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px} .bullet-list li:before{content:"•";color:var(--green);font-weight:950}
+    .risk-grid{grid-template-columns:repeat(4,minmax(0,1fr))} .risk-card h3{margin:0 0 8px;letter-spacing:-.03em;display:flex;justify-content:space-between;gap:8px;align-items:center} .risk-card p{margin:0;color:var(--muted);line-height:1.5;font-size:.93rem} .catalyst-grid{grid-template-columns:repeat(4,minmax(0,1fr))} .date-badge{display:inline-flex;width:fit-content;padding:7px 10px;border-radius:999px;color:var(--purple);background:var(--purple-bg);border:1px solid rgba(185,147,255,.22);font-size:.78rem;font-weight:900} .portfolio-grid{grid-template-columns:repeat(2,minmax(0,1fr))} .allocation-row{display:grid;grid-template-columns:110px minmax(0,1fr) 55px;gap:12px;align-items:center;margin-bottom:12px} .method-grid{grid-template-columns:repeat(4,minmax(0,1fr))} .method-card .num{width:34px;height:34px;display:grid;place-items:center;border-radius:12px;background:var(--blue-bg);color:var(--blue);font-weight:950;margin-bottom:12px} .method-card h3{margin:0 0 8px;letter-spacing:-.03em} .method-card p,.source-card p,.disclaimer{margin:0;color:var(--muted);line-height:1.55;font-size:.92rem} .source-grid{grid-template-columns:1fr 1fr} .disclaimer{border-left:3px solid rgba(114,167,255,.65)} .footer{margin-top:36px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem;line-height:1.5}
+    @media(max-width:1100px){.hero-content,.chart-card,.two-col{grid-template-columns:1fr}.summary-grid,.method-grid,.risk-grid,.sector-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cards-grid,.catalyst-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav{align-items:flex-start;flex-direction:column}.nav-links{justify-content:flex-start}}
+    @media(max-width:720px){.page{width:min(100% - 22px,1280px);padding-top:14px}.summary-grid,.cards-grid,.method-grid,.mini-grid,.risk-grid,.catalyst-grid,.portfolio-grid,.source-grid,.hero-meta,.sector-grid{grid-template-columns:1fr}.hero{border-radius:24px}.nav-links a{padding:8px 9px}.bar-row,.allocation-row{grid-template-columns:72px minmax(110px,1fr) 42px}}
   </style>
 </head>
 <body>
   <main class="page">
     <nav class="nav">
-      <a class="brand" href="#">
-        <span class="brand-mark">BB</span>
-        <span>Long-Term Stock Dashboard</span>
-      </a>
+      <a class="brand" href="#"><span class="brand-mark">BB</span><span>Long-Term Stock Dashboard</span></a>
       <div class="nav-links">
-        <a href="#scoreboard">Scoreboard</a>
-        <a href="#undervalued">Undervalued</a>
-        <a href="#newideas">New Ideas</a>
-        <a href="#method">Method</a>
+        <a href="#executive">Executive</a><a href="#sectors">Sectors</a><a href="#scoreboard">Scoreboard</a><a href="#undervalued">Undervalued</a><a href="#spotlight">Spotlight</a><a href="#risk">Risk</a><a href="#method">Method</a>
       </div>
     </nav>
 
     <section class="hero">
       <div class="hero-content">
         <div>
-          <div class="eyebrow">📈 Monday / Thursday Market Buy Review</div>
-          <h1>Find quality stocks at fair or cheap prices.</h1>
-          <p>
-            A clean dashboard for long-term 10-year investing. It ranks opportunities, explains why each stock is undervalued or overvalued, and compares every idea against simply adding to VOO, QQQM, MSFT, GOOGL, or NVDA.
-          </p>
-          <div class="hero-actions">
-            <a class="btn primary" href="#scoreboard">View scoreboard</a>
-            <a class="btn" href="#undervalued">See undervalued names</a>
-          </div>
+          <div class="eyebrow">📈 Monday / Thursday Client-Ready Market Review</div>
+          <h1>Long-term stock research dashboard.</h1>
+          <p>A client-ready research dashboard for long-term 10-year investing across quality compounders, undervalued opportunities, speculative themes, and diversified sectors.</p>
+          <div class="hero-actions"><a class="btn primary" href="#scoreboard">View scoreboard</a><a class="btn" href="#sectors">Sector map</a><a class="btn" href="#undervalued">Undervalued names</a></div>
         </div>
         <aside class="hero-card">
-          <div class="label">Current market status</div>
-          <div class="big" id="marketStatusHero">Selective Buy</div>
-          <div class="small" id="marketSummaryHero">Market is not broadly cheap, so focus on quality names with valuation support and strong free cash flow.</div>
+          <div class="label">Current market status</div><div class="big" id="marketStatusHero"></div><div class="small" id="marketSummaryHero"></div>
+          <div class="hero-meta"><div><span>Last updated</span><strong id="lastUpdatedHero"></strong></div><div><span>Confidence</span><strong id="confidenceHero"></strong></div></div>
         </aside>
       </div>
     </section>
 
     <section class="grid summary-grid" id="summaryCards"></section>
 
+    <section class="section" id="executive">
+      <div class="section-head"><div><h2>Executive summary</h2><p class="section-desc">Client-ready summary of what changed and how to use the expanded universe.</p></div></div>
+      <div class="two-col"><article class="card exec-card"><ul class="exec-list" id="executiveBullets"></ul></article><article class="card"><div class="metric-label">Decision framework</div><div class="metric-value" id="decisionHeadline"></div><p class="metric-note" id="decisionText"></p></article></div>
+    </section>
+
+    <section class="section" id="sectors">
+      <div class="section-head"><div><h2>Sector universe</h2><p class="section-desc">The dashboard tracks multiple industries so the research universe is client-ready and diversified.</p></div></div>
+      <div class="grid sector-grid" id="sectorCards"></div>
+    </section>
+
     <section class="section" id="scoreboard">
       <div class="section-head">
-        <div>
-          <h2>Valuation scoreboard</h2>
-          <p class="section-desc">
-            This is the main table. The “key reason” column is what keeps the dashboard honest: it explains why a stock is cheap, fair, or expensive.
-          </p>
-        </div>
-        <div class="filters" id="filters">
-          <button class="filter active" data-filter="all">All</button>
-          <button class="filter" data-filter="undervalued">Undervalued</button>
-          <button class="filter" data-filter="fair">Fair</button>
-          <button class="filter" data-filter="overvalued">Overvalued</button>
-          <button class="filter" data-filter="new">New Ideas</button>
-          <button class="filter" data-filter="core">Core</button>
-        </div>
+        <div><h2>Valuation scoreboard</h2><p class="section-desc">Filter by valuation, core/universe status, sector, or search by ticker/company.</p></div>
+        <input class="search-box" id="searchBox" placeholder="Search ticker, company, sector..." />
       </div>
-
+      <div class="filters" id="filters" style="margin-bottom:12px"></div>
+      <div class="filters" id="sectorFilters" style="margin-bottom:14px"></div>
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Stock</th>
-              <th>Score</th>
-              <th>Rating</th>
-              <th>Valuation</th>
-              <th>Key reason</th>
-              <th>Fair value</th>
-              <th>Buy under</th>
-              <th>Main risk</th>
-              <th>Better than core?</th>
-            </tr>
-          </thead>
-          <tbody id="stockTable"></tbody>
-        </table>
+        <table><thead><tr><th>Stock</th><th>Sector</th><th>Score</th><th>Rating</th><th>Valuation</th><th>Key valuation reason</th><th>Fair value</th><th>Buy under</th><th>Main risk</th></tr></thead><tbody id="stockTable"></tbody></table>
       </div>
     </section>
 
     <section class="section">
-      <div class="section-head">
-        <div>
-          <h2>Score chart</h2>
-          <p class="section-desc">Scores are not predictions. They are a structured way to compare business quality, valuation, growth, balance sheet, moat, and portfolio fit.</p>
-        </div>
-      </div>
-      <div class="card chart-card">
-        <div class="bars" id="scoreBars"></div>
-        <div class="chart-note">
-          <strong>How to read this:</strong><br />
-          90+ is rare. 80–89 is attractive for quality compounders. 70–79 can be good but usually needs a better entry. Below 70 should be watched carefully or avoided unless the thesis is unusually strong.
-        </div>
-      </div>
+      <div class="section-head"><div><h2>Score chart</h2><p class="section-desc">Top 25 strongest research candidates by score.</p></div></div>
+      <div class="card chart-card"><div class="bars" id="scoreBars"></div><div class="chart-note"><strong>How to read this:</strong><br>90+ is rare. 80–89 is attractive for quality compounders. 70–79 can be useful but needs a better entry. Below 70 is speculative or needs proof.</div></div>
     </section>
 
-    <section class="section" id="undervalued">
-      <div class="section-head">
-        <div>
-          <h2>Undervalued watchlist</h2>
-          <p class="section-desc">These cards focus only on stocks tagged undervalued or slightly undervalued, with the exact “why” behind the valuation call.</p>
-        </div>
-      </div>
-      <div class="grid cards-grid" id="undervaluedCards"></div>
-    </section>
+    <section class="section" id="undervalued"><div class="section-head"><div><h2>Undervalued watchlist</h2><p class="section-desc">Preliminary undervalued candidates. Live reports should verify current valuation before buying.</p></div></div><div class="grid cards-grid" id="undervaluedCards"></div></section>
+    <section class="section" id="spotlight"><div class="section-head"><div><h2>Spotlight ideas</h2><p class="section-desc">Priority research ideas from the expanded universe.</p></div></div><div class="grid cards-grid" id="spotlightCards"></div></section>
+    <section class="section"><div class="section-head"><div><h2>Full research universe</h2><p class="section-desc">All tracked names using the same valuation-reason card format.</p></div></div><div class="grid cards-grid" id="reasonCards"></div></section>
 
-    <section class="section" id="newideas">
-      <div class="section-head">
-        <div>
-          <h2>3 new stock ideas</h2>
-          <p class="section-desc">Every report should bring three fresh ideas that are not already part of the main core watchlist.</p>
-        </div>
-      </div>
-      <div class="grid cards-grid" id="newIdeaCards"></div>
-    </section>
+    <section class="section"><div class="section-head"><div><h2>Portfolio fit</h2><p class="section-desc">Suggested framework for balancing core ETFs, quality stocks, cyclicals, and speculative names.</p></div></div><div class="grid portfolio-grid"><article class="card"><div class="metric-label">Suggested framework</div><div id="allocationRows"></div></article><article class="card"><div class="metric-label">Portfolio note</div><div class="metric-value" id="portfolioHeadline"></div><p class="metric-note" id="portfolioNote"></p></article></div></section>
 
-    <section class="section">
-      <div class="section-head">
-        <div>
-          <h2>Deep valuation reason cards</h2>
-          <p class="section-desc">Every stock gets a reason card so the website never just says “undervalued” without explaining why.</p>
-        </div>
-      </div>
-      <div class="grid cards-grid" id="reasonCards"></div>
-    </section>
+    <section class="section" id="risk"><div class="section-head"><div><h2>Risk dashboard</h2><p class="section-desc">Risk flags to keep the dashboard from becoming hype-driven.</p></div></div><div class="grid risk-grid" id="riskCards"></div></section>
+    <section class="section"><div class="section-head"><div><h2>Catalysts & earnings watch</h2><p class="section-desc">Events that matter most by theme.</p></div></div><div class="grid catalyst-grid" id="catalystCards"></div></section>
 
-    <section class="section" id="method">
-      <div class="section-head">
-        <div>
-          <h2>Research method</h2>
-          <p class="section-desc">This is the process each Monday/Thursday update should follow before giving ratings.</p>
-        </div>
-      </div>
-      <div class="grid method-grid">
-        <div class="card method-card">
-          <div class="num">1</div>
-          <h3>Verify current data</h3>
-          <p>Check current price, recent earnings, valuation multiples, balance sheet, and relevant market news before forming an opinion.</p>
-        </div>
-        <div class="card method-card">
-          <div class="num">2</div>
-          <h3>Compare valuation</h3>
-          <p>Use forward P/E, free cash flow yield, EV/EBITDA, historical range, and peer comparisons to judge cheap vs expensive.</p>
-        </div>
-        <div class="card method-card">
-          <div class="num">3</div>
-          <h3>Score quality</h3>
-          <p>Rank business quality, growth, margins, debt, moat, durability, risks, and analyst expectations.</p>
-        </div>
-        <div class="card method-card">
-          <div class="num">4</div>
-          <h3>Beat the default</h3>
-          <p>Every stock must prove why it deserves money over VOO, QQQM, MSFT, GOOGL, or NVDA.</p>
-        </div>
-      </div>
-    </section>
+    <section class="section" id="method"><div class="section-head"><div><h2>Research method</h2><p class="section-desc">Process each Monday/Thursday update should follow before changing ratings.</p></div></div><div class="grid method-grid">
+      <div class="card method-card"><div class="num">1</div><h3>Verify current data</h3><p>Check price, earnings, valuation multiples, balance sheet, and recent news before ratings.</p></div>
+      <div class="card method-card"><div class="num">2</div><h3>Compare valuation</h3><p>Use forward P/E, FCF yield, EV/EBITDA, historical range, and peer comparisons.</p></div>
+      <div class="card method-card"><div class="num">3</div><h3>Score quality</h3><p>Rank business quality, growth, margins, debt, moat, durability, and risk.</p></div>
+      <div class="card method-card"><div class="num">4</div><h3>Beat the default</h3><p>Every stock must beat the case for simply adding to VOO, QQQM, MSFT, GOOGL, or NVDA.</p></div>
+    </div></section>
 
-    <section class="section card disclaimer">
-      <strong>Disclaimer:</strong> This dashboard is a research organizer, not financial advice. Scores and fair value ranges are estimates and can be wrong. Always verify current figures before investing.
-    </section>
-
-    <footer class="footer">
-      Built for GitHub Pages. Update the report data section inside this file after each Monday/Thursday research report.
-    </footer>
+    <section class="section"><div class="grid source-grid"><article class="card source-card"><div class="metric-label">Data checked</div><p id="dataChecked"></p></article><article class="card source-card"><div class="metric-label">Uncertainty notes</div><p id="uncertaintyNotes"></p></article></div></section>
+    <section class="section card disclaimer"><strong>Disclaimer:</strong> This dashboard is a research organizer, not financial advice. Scores and fair value ranges are estimates and can be wrong. Always verify current figures before investing.</section>
+    <footer class="footer">Built for GitHub Pages. Update the report data section inside this file after each Monday/Thursday research report.</footer>
   </main>
 
   <script>
-    // ============================================================
-    // REPORT DATA — replace this object after each new report.
-    // Ask ChatGPT for: "Give me the Website Update Block for my dashboard."
-    // ============================================================
     const report = {
-      date: "Sample report — replace with the next Monday/Thursday update",
-      marketStatus: "Selective Buy",
-      marketSummary: "Market is not broadly cheap, so focus on quality names with valuation support, durable growth, and strong free cash flow.",
-      cards: [
-        { label: "Best buy today", value: "GOOGL", note: "Best mix of quality, valuation, and long-term upside in this sample." },
-        { label: "Best safe buy", value: "VOO", note: "Default diversified option when individual stock entries are not attractive." },
-        { label: "Most undervalued", value: "PYPL", note: "Sample new idea with valuation support but higher execution risk." },
-        { label: "Avoid chasing", value: "NVDA", note: "Elite company, but sample rating says wait for a better entry." }
+      "date": "Current dashboard \u2014 starting research dashboard",
+      "marketStatus": "Long-Term Research Dashboard",
+      "confidence": "Universe built; valuations need live update",
+      "marketSummary": "Current diversified research universe: 80-idea research universe across quantum, healthcare, space/defense, energy/power, financials, consumer, industrials, materials, and digital infrastructure.",
+      "decisionHeadline": "Use this as a research universe, not an all-in buy list",
+      "decisionText": "The website now tracks many more quality and speculative names. The Monday/Thursday reports should update current valuation, buy-under levels, and which ideas are actually attractive at that time.",
+      "portfolioHeadline": "More diversified than before",
+      "portfolioNote": "The added sectors reduce overreliance on MSFT/GOOGL/NVDA/QQQM while still keeping high-upside themes like AI, quantum, space, and data-center power.",
+      "dataChecked": "For each live update, verify current prices, valuation multiples, earnings, free cash flow, debt, peer valuation, historical valuation range, catalyst dates, and recent news before changing buy/hold/wait calls.",
+      "uncertaintyNotes": "This current dashboard list is a client-ready research universe. It is not a live real-time valuation model. Any buy-under or fair-value call should be refreshed in each Monday/Thursday report.",
+      "cards": [
+            {
+                  "label": "Tracked names",
+                  "value": "80",
+                  "note": "Diversified long-term research universe."
+            },
+            {
+                  "label": "Industries covered",
+                  "value": "13",
+                  "note": "Includes tech, quantum, healthcare, space, energy, financials, consumer, industrials, materials, and REITs."
+            },
+            {
+                  "label": "Undervalued candidates",
+                  "value": "13",
+                  "note": "These require live verification before any real buy decision."
+            },
+            {
+                  "label": "Speculative themes",
+                  "value": "Quantum + Space + AI Power",
+                  "note": "High upside, but position sizes should be smaller."
+            }
       ],
-      stocks: [
-        {
-          ticker: "GOOGL",
-          company: "Alphabet",
-          group: "core",
-          score: 86,
-          rating: "Buy / Accumulate",
-          valuation: "undervalued",
-          valuationLabel: "Slightly undervalued",
-          keyReason: "Strong free cash flow, durable search/YouTube/cloud assets, and a reasonable multiple compared with other mega-cap AI winners.",
-          fairValue: "$340–$410",
-          buyUnder: "$355",
-          mainRisk: "AI search disruption and ad-cycle sensitivity.",
-          betterThanCore: "Better than QQQM if you want direct mega-cap value.",
-          thesis: [
-            "High-margin core search business still funds AI, YouTube, and cloud growth.",
-            "Valuation can look cheaper than peers after adjusting for cash flow durability.",
-            "Risk is real, but some AI-search fear may already be priced in."
-          ]
-        },
-        {
-          ticker: "MSFT",
-          company: "Microsoft",
-          group: "core",
-          score: 88,
-          rating: "Buy / Accumulate",
-          valuation: "fair",
-          valuationLabel: "Fairly valued",
-          keyReason: "One of the best businesses in the world, but the stock usually deserves only a fair-value rating unless it pulls back.",
-          fairValue: "$360–$420",
-          buyUnder: "$365",
-          mainRisk: "AI capex spending and high expectations.",
-          betterThanCore: "Better than QQQM if underweight; otherwise add slowly.",
-          thesis: [
-            "Azure, Office, Windows, GitHub, and AI give Microsoft a deep moat.",
-            "Margins and free cash flow are elite.",
-            "The issue is not business quality; it is whether the entry price is attractive."
-          ]
-        },
-        {
-          ticker: "NVDA",
-          company: "Nvidia",
-          group: "core",
-          score: 78,
-          rating: "Hold / Buy Pullbacks",
-          valuation: "overvalued",
-          valuationLabel: "Fair to expensive",
-          keyReason: "Growth is elite, but the valuation already prices in a lot of AI dominance and leaves less room for disappointment.",
-          fairValue: "$175–$220",
-          buyUnder: "$185",
-          mainRisk: "Expectations, competition, export limits, and hyperscaler capex cycles.",
-          betterThanCore: "Only better than VOO/QQQM after a pullback.",
-          thesis: [
-            "Nvidia remains the leader in AI accelerators.",
-            "Margins and revenue growth are excellent.",
-            "The biggest risk is valuation risk, not business-quality risk."
-          ]
-        },
-        {
-          ticker: "VOO",
-          company: "Vanguard S&P 500 ETF",
-          group: "core",
-          score: 82,
-          rating: "Buy Slowly",
-          valuation: "fair",
-          valuationLabel: "Slightly over fair value",
-          keyReason: "Best default long-term ETF, but broad market multiples are not cheap compared with history.",
-          fairValue: "Market-dependent",
-          buyUnder: "DCA / better after 5–10% pullback",
-          mainRisk: "Broad-market valuation compression.",
-          betterThanCore: "Best choice when no single stock has a clear edge.",
-          thesis: [
-            "Instant diversification across the S&P 500.",
-            "Less single-company risk.",
-            "Not the highest upside, but very strong as a default long-term buy."
-          ]
-        },
-        {
-          ticker: "PYPL",
-          company: "PayPal",
-          group: "new",
-          score: 79,
-          rating: "Watch / Speculative Buy",
-          valuation: "undervalued",
-          valuationLabel: "Undervalued but higher risk",
-          keyReason: "Valuation may be cheap versus earnings/cash flow, but the business needs stronger branded-checkout growth to deserve a higher multiple.",
-          fairValue: "$80–$105",
-          buyUnder: "$75",
-          mainRisk: "Competition from Apple Pay, cards, and weaker checkout growth.",
-          betterThanCore: "Only better than VOO if you accept turnaround risk.",
-          thesis: [
-            "Potential value stock if earnings and free cash flow stay durable.",
-            "Market skepticism creates possible upside if growth stabilizes.",
-            "Needs proof that margins and branded checkout can re-accelerate."
-          ]
-        },
-        {
-          ticker: "TMO",
-          company: "Thermo Fisher Scientific",
-          group: "new",
-          score: 84,
-          rating: "Buy on Weakness",
-          valuation: "fair",
-          valuationLabel: "Fair to slightly undervalued",
-          keyReason: "High-quality life sciences compounder that can become attractive when biotech/diagnostics spending is weak and sentiment is low.",
-          fairValue: "$600–$690",
-          buyUnder: "$575",
-          mainRisk: "Slower pharma/biotech funding cycle.",
-          betterThanCore: "Good diversifier versus tech-heavy QQQM.",
-          thesis: [
-            "Strong moat in instruments, consumables, and services.",
-            "Defensive quality compared with pure growth tech.",
-            "Attractive if the market underprices a normalized recovery."
-          ]
-        },
-        {
-          ticker: "V",
-          company: "Visa",
-          group: "new",
-          score: 85,
-          rating: "Buy on Pullbacks",
-          valuation: "fair",
-          valuationLabel: "Fairly valued",
-          keyReason: "Exceptional margins and moat, but premium valuation means the buy case improves most during market pullbacks.",
-          fairValue: "$320–$380",
-          buyUnder: "$315",
-          mainRisk: "Regulation, network fees, and fintech disruption.",
-          betterThanCore: "Better quality than many stocks, but not always better than MSFT/GOOGL at the wrong price.",
-          thesis: [
-            "Visa is an asset-light toll road on global payments.",
-            "Margins, cash flow, and buybacks are extremely strong.",
-            "Great company, but entry price matters because it rarely looks cheap."
-          ]
-        }
+      "executiveBullets": [
+            {
+                  "icon": "1",
+                  "title": "Dashboard scope",
+                  "text": "The dashboard currently tracks 80 ideas instead of staying mostly tech-focused."
+            },
+            {
+                  "icon": "2",
+                  "title": "Diversification upgrade",
+                  "text": "Added healthcare, financials, energy/power, industrials, consumer, materials, defense, REITs, and quantum computing."
+            },
+            {
+                  "icon": "3",
+                  "title": "Client-ready use",
+                  "text": "The site now works as a professional research dashboard: valuation reason, risks, catalysts, sector map, and portfolio-fit notes."
+            },
+            {
+                  "icon": "4",
+                  "title": "Next step",
+                  "text": "The Monday/Thursday automation should refresh live prices, valuation multiples, fair values, and buy-under prices for the highest-ranked names."
+            }
+      ],
+      "allocation": [
+            {
+                  "bucket": "Core ETFs",
+                  "percent": 30,
+                  "note": "VOO/QQQM default base"
+            },
+            {
+                  "bucket": "Quality stocks",
+                  "percent": 35,
+                  "note": "MSFT, GOOGL, healthcare, financials"
+            },
+            {
+                  "bucket": "Cyclicals/value",
+                  "percent": 20,
+                  "note": "Energy, industrials, materials"
+            },
+            {
+                  "bucket": "Speculative",
+                  "percent": 10,
+                  "note": "Quantum, space, IREN/SOFI-style upside"
+            },
+            {
+                  "bucket": "Cash",
+                  "percent": 5,
+                  "note": "Keep dry powder for pullbacks"
+            }
+      ],
+      "risks": [
+            {
+                  "name": "Data freshness",
+                  "level": "High",
+                  "description": "The expanded universe needs live valuation updates before being used as an actual buy list."
+            },
+            {
+                  "name": "Speculative themes",
+                  "level": "High",
+                  "description": "Quantum, small space, and AI-power infrastructure can move sharply on hype, dilution, or funding news."
+            },
+            {
+                  "name": "Sector concentration",
+                  "level": "Medium",
+                  "description": "Even after expansion, AI and data-center themes overlap across semis, power, software, and REITs."
+            },
+            {
+                  "name": "Macro sensitivity",
+                  "level": "Medium",
+                  "description": "Financials, industrials, energy, materials, and REITs can be heavily affected by rates and the economic cycle."
+            }
+      ],
+      "catalysts": [
+            {
+                  "ticker": "Semis/AI",
+                  "date": "Each earnings cycle",
+                  "event": "Watch AI capex, data-center demand, gross margins, export controls, and customer concentration."
+            },
+            {
+                  "ticker": "Healthcare",
+                  "date": "Pipeline updates",
+                  "event": "Watch FDA decisions, clinical data, pricing pressure, GLP-1 competition, and managed-care margins."
+            },
+            {
+                  "ticker": "Energy/Power",
+                  "date": "Quarterly updates",
+                  "event": "Watch data-center power demand, commodity prices, grid investment, and nuclear/utility contracts."
+            },
+            {
+                  "ticker": "Quantum/Space",
+                  "date": "Milestone-driven",
+                  "event": "Watch cash runway, contract wins, technical milestones, launch schedules, and dilution risk."
+            }
+      ],
+      "stocks": [
+            {
+                  "ticker": "VOO",
+                  "company": "Vanguard S&P 500 ETF",
+                  "sector": "Core ETFs",
+                  "industry": "Broad Market ETF",
+                  "group": "core",
+                  "spotlight": false,
+                  "score": 84,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Best default diversified long-term holding, but the broad market should still be judged against forward earnings and valuation levels.",
+                  "fairValue": "Market-dependent",
+                  "buyUnder": "DCA / pullbacks",
+                  "mainRisk": "Broad-market valuation compression and concentration in mega-cap leaders.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Default long-term option when individual-stock upside is not clear.",
+                        "Keeps portfolio diversified and reduces single-company risk.",
+                        "Best used with dollar-cost averaging and discipline around concentration."
+                  ]
+            },
+            {
+                  "ticker": "QQQM",
+                  "company": "Invesco NASDAQ 100 ETF",
+                  "sector": "Core ETFs",
+                  "industry": "Growth ETF",
+                  "group": "core",
+                  "spotlight": false,
+                  "score": 80,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Strong tech-heavy ETF, but it overlaps heavily with mega-cap AI winners and can become expensive when the Nasdaq is stretched.",
+                  "fairValue": "Market-dependent",
+                  "buyUnder": "DCA / 7\u201312% pullbacks",
+                  "mainRisk": "Broad-market valuation compression and concentration in mega-cap leaders.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Default long-term option when individual-stock upside is not clear.",
+                        "Keeps portfolio diversified and reduces single-company risk.",
+                        "Best used with dollar-cost averaging and discipline around concentration."
+                  ]
+            },
+            {
+                  "ticker": "MSFT",
+                  "company": "Microsoft",
+                  "sector": "Mega-Cap Tech",
+                  "industry": "Cloud / Software / AI",
+                  "group": "core",
+                  "spotlight": false,
+                  "score": 88,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Elite software/cloud/AI compounder, but usually needs a pullback to become obviously undervalued.",
+                  "fairValue": "Live update",
+                  "buyUnder": "Live update",
+                  "mainRisk": "High expectations, AI capex, regulatory pressure, and valuation compression.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Durable cash flow and scale advantages support long-term compounding.",
+                        "AI and cloud exposure can keep revenue growth stronger than the market.",
+                        "Entry price matters because expectations are already high."
+                  ]
+            },
+            {
+                  "ticker": "GOOGL",
+                  "company": "Alphabet",
+                  "sector": "Mega-Cap Tech",
+                  "industry": "Search / Cloud / AI",
+                  "group": "core",
+                  "spotlight": false,
+                  "score": 86,
+                  "rating": "Buy / Accumulate",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "High free cash flow and durable Search/YouTube/Cloud assets can make it attractive when AI-search risk is overly discounted.",
+                  "fairValue": "Live update",
+                  "buyUnder": "Live update",
+                  "mainRisk": "High expectations, AI capex, regulatory pressure, and valuation compression.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Durable cash flow and scale advantages support long-term compounding.",
+                        "AI and cloud exposure can keep revenue growth stronger than the market.",
+                        "Entry price matters because expectations are already high."
+                  ]
+            },
+            {
+                  "ticker": "NVDA",
+                  "company": "Nvidia",
+                  "sector": "Semiconductors & AI Infrastructure",
+                  "industry": "AI Semiconductors",
+                  "group": "core",
+                  "spotlight": false,
+                  "score": 78,
+                  "rating": "Wait / Do Not Chase",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Elite AI leader, but valuation often prices in near-perfect demand and margin strength.",
+                  "fairValue": "Live update",
+                  "buyUnder": "Pullback only",
+                  "mainRisk": "Cyclicality, export restrictions, inventory cycles, and customer capex timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "AI, data centers, networking, and advanced chips create a long runway.",
+                        "The strongest names have pricing power, scale, and high switching costs.",
+                        "Valuation should be compared against normalized earnings, not peak-cycle hype."
+                  ]
+            },
+            {
+                  "ticker": "RKLB",
+                  "company": "Rocket Lab",
+                  "sector": "Space & Defense",
+                  "industry": "Launch / Space Systems",
+                  "group": "core",
+                  "spotlight": false,
+                  "score": 74,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "High-upside space infrastructure name, but needs execution, scale, and cash-flow progress to justify long-term upside.",
+                  "fairValue": "Live update",
+                  "buyUnder": "Speculative dips",
+                  "mainRisk": "Contract timing, technical execution, government budgets, and high capital requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Defense, satellites, launch, and space infrastructure have long-term demand drivers.",
+                        "Government and commercial contracts can support durable revenue if execution is strong.",
+                        "Speculative space names require smaller sizing and proof of cash-flow progress."
+                  ]
+            },
+            {
+                  "ticker": "SOFI",
+                  "company": "SoFi Technologies",
+                  "sector": "Financials",
+                  "industry": "Fintech / Digital Banking",
+                  "group": "core",
+                  "spotlight": false,
+                  "score": 75,
+                  "rating": "Watch / Buy Small",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "Potentially valuable if member growth, deposits, lending quality, and profitability continue improving.",
+                  "fairValue": "Live update",
+                  "buyUnder": "Live update",
+                  "mainRisk": "Credit losses, interest-rate swings, regulation, and economic-cycle sensitivity.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Financials can provide value, dividends, and capital-return potential.",
+                        "Best-in-class franchises benefit from scale, deposits, payment networks, or asset management.",
+                        "Valuation should be judged against credit quality, capital levels, and normalized earnings."
+                  ]
+            },
+            {
+                  "ticker": "IREN",
+                  "company": "IREN",
+                  "sector": "Energy & Power",
+                  "industry": "AI Data Center / Bitcoin Mining",
+                  "group": "core",
+                  "spotlight": false,
+                  "score": 69,
+                  "rating": "Wait / Do Not Chase",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Potential upside from AI/HPC power assets, but valuation and business quality depend heavily on execution and power economics.",
+                  "fairValue": "Live update",
+                  "buyUnder": "Speculative only",
+                  "mainRisk": "Commodity cycles, policy changes, interest rates, and power-price volatility.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Energy and power diversify the dashboard away from software and semis.",
+                        "Electricity demand from data centers can benefit power generators and grid names.",
+                        "Cash flow discipline matters more than hype in this sector."
+                  ]
+            },
+            {
+                  "ticker": "SPCX",
+                  "company": "SpaceX exposure / SPCX",
+                  "sector": "Space & Defense",
+                  "industry": "Private Space / ETF Exposure",
+                  "group": "core",
+                  "spotlight": false,
+                  "score": 77,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Attractive long-term space theme, but private-market exposure and valuation transparency require caution.",
+                  "fairValue": "Live update",
+                  "buyUnder": "Live update",
+                  "mainRisk": "Contract timing, technical execution, government budgets, and high capital requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Defense, satellites, launch, and space infrastructure have long-term demand drivers.",
+                        "Government and commercial contracts can support durable revenue if execution is strong.",
+                        "Speculative space names require smaller sizing and proof of cash-flow progress."
+                  ]
+            },
+            {
+                  "ticker": "AVGO",
+                  "company": "Broadcom",
+                  "sector": "Semiconductors & AI Infrastructure",
+                  "industry": "AI Networking / Custom Silicon",
+                  "group": "universe",
+                  "spotlight": true,
+                  "score": 87,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Strong AI networking/custom silicon exposure plus software cash flow, but valuation should be watched after big runs.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, export restrictions, inventory cycles, and customer capex timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "AI, data centers, networking, and advanced chips create a long runway.",
+                        "The strongest names have pricing power, scale, and high switching costs.",
+                        "Valuation should be compared against normalized earnings, not peak-cycle hype."
+                  ]
+            },
+            {
+                  "ticker": "AMD",
+                  "company": "Advanced Micro Devices",
+                  "sector": "Semiconductors & AI Infrastructure",
+                  "industry": "CPUs / GPUs",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 80,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "AI accelerator upside plus CPU share gains create optionality, but it must prove sustained data-center AI competitiveness.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, export restrictions, inventory cycles, and customer capex timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "AI, data centers, networking, and advanced chips create a long runway.",
+                        "The strongest names have pricing power, scale, and high switching costs.",
+                        "Valuation should be compared against normalized earnings, not peak-cycle hype."
+                  ]
+            },
+            {
+                  "ticker": "ASML",
+                  "company": "ASML Holding",
+                  "sector": "Semiconductors & AI Infrastructure",
+                  "industry": "Lithography Equipment",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 86,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Near-monopoly EUV lithography position makes it one of the most important picks-and-shovels semiconductor companies.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, export restrictions, inventory cycles, and customer capex timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "AI, data centers, networking, and advanced chips create a long runway.",
+                        "The strongest names have pricing power, scale, and high switching costs.",
+                        "Valuation should be compared against normalized earnings, not peak-cycle hype."
+                  ]
+            },
+            {
+                  "ticker": "TSM",
+                  "company": "Taiwan Semiconductor",
+                  "sector": "Semiconductors & AI Infrastructure",
+                  "industry": "Foundry",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 88,
+                  "rating": "Buy / Accumulate",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "World-class foundry scale, advanced-node leadership, and AI chip demand can make it attractive if geopolitical risk is over-discounted.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, export restrictions, inventory cycles, and customer capex timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "AI, data centers, networking, and advanced chips create a long runway.",
+                        "The strongest names have pricing power, scale, and high switching costs.",
+                        "Valuation should be compared against normalized earnings, not peak-cycle hype."
+                  ]
+            },
+            {
+                  "ticker": "ARM",
+                  "company": "Arm Holdings",
+                  "sector": "Semiconductors & AI Infrastructure",
+                  "industry": "Chip Architecture",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 76,
+                  "rating": "Wait / Do Not Chase",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Strategic chip IP platform with strong licensing economics, but valuation can run far ahead of current earnings.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, export restrictions, inventory cycles, and customer capex timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "AI, data centers, networking, and advanced chips create a long runway.",
+                        "The strongest names have pricing power, scale, and high switching costs.",
+                        "Valuation should be compared against normalized earnings, not peak-cycle hype."
+                  ]
+            },
+            {
+                  "ticker": "MU",
+                  "company": "Micron",
+                  "sector": "Semiconductors & AI Infrastructure",
+                  "industry": "Memory / HBM",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 77,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "AI memory and HBM demand are attractive, but memory remains cyclical and needs cycle-aware entries.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, export restrictions, inventory cycles, and customer capex timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "AI, data centers, networking, and advanced chips create a long runway.",
+                        "The strongest names have pricing power, scale, and high switching costs.",
+                        "Valuation should be compared against normalized earnings, not peak-cycle hype."
+                  ]
+            },
+            {
+                  "ticker": "ANET",
+                  "company": "Arista Networks",
+                  "sector": "Semiconductors & AI Infrastructure",
+                  "industry": "AI Networking",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 84,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "High-quality networking winner benefiting from cloud and AI cluster buildouts, but valuation usually demands patience.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, export restrictions, inventory cycles, and customer capex timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "AI, data centers, networking, and advanced chips create a long runway.",
+                        "The strongest names have pricing power, scale, and high switching costs.",
+                        "Valuation should be compared against normalized earnings, not peak-cycle hype."
+                  ]
+            },
+            {
+                  "ticker": "PANW",
+                  "company": "Palo Alto Networks",
+                  "sector": "Cybersecurity & Software",
+                  "industry": "Cybersecurity Platform",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 83,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Security platform consolidation, recurring revenue, and strong enterprise relevance make it a durable watchlist name.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Premium multiples, competition, slower enterprise spending, and execution risk.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Cybersecurity and workflow software can compound through recurring revenue.",
+                        "High gross margins and retention can create excellent long-term economics.",
+                        "The best entries usually come during growth scares or market pullbacks."
+                  ]
+            },
+            {
+                  "ticker": "CRWD",
+                  "company": "CrowdStrike",
+                  "sector": "Cybersecurity & Software",
+                  "industry": "Endpoint / Cloud Security",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 81,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Strong cybersecurity platform and retention, but premium valuation and execution risk require pullback discipline.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Premium multiples, competition, slower enterprise spending, and execution risk.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Cybersecurity and workflow software can compound through recurring revenue.",
+                        "High gross margins and retention can create excellent long-term economics.",
+                        "The best entries usually come during growth scares or market pullbacks."
+                  ]
+            },
+            {
+                  "ticker": "NOW",
+                  "company": "ServiceNow",
+                  "sector": "Cybersecurity & Software",
+                  "industry": "Enterprise Workflow Software",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 84,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Mission-critical workflow software with durable enterprise demand, but multiple usually requires a long horizon.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Premium multiples, competition, slower enterprise spending, and execution risk.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Cybersecurity and workflow software can compound through recurring revenue.",
+                        "High gross margins and retention can create excellent long-term economics.",
+                        "The best entries usually come during growth scares or market pullbacks."
+                  ]
+            },
+            {
+                  "ticker": "ADBE",
+                  "company": "Adobe",
+                  "sector": "Cybersecurity & Software",
+                  "industry": "Creative / Digital Media Software",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 78,
+                  "rating": "Watch / Buy Small",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "Potential value if AI fears are over-discounting Adobe's brand, pricing power, and cash-flow durability.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Premium multiples, competition, slower enterprise spending, and execution risk.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Cybersecurity and workflow software can compound through recurring revenue.",
+                        "High gross margins and retention can create excellent long-term economics.",
+                        "The best entries usually come during growth scares or market pullbacks."
+                  ]
+            },
+            {
+                  "ticker": "PLTR",
+                  "company": "Palantir",
+                  "sector": "Cybersecurity & Software",
+                  "industry": "AI Data Platform",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 76,
+                  "rating": "Wait / Do Not Chase",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Strong AI/data platform narrative, but valuation can already price in a lot of future growth.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Premium multiples, competition, slower enterprise spending, and execution risk.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Cybersecurity and workflow software can compound through recurring revenue.",
+                        "High gross margins and retention can create excellent long-term economics.",
+                        "The best entries usually come during growth scares or market pullbacks."
+                  ]
+            },
+            {
+                  "ticker": "SNOW",
+                  "company": "Snowflake",
+                  "sector": "Cybersecurity & Software",
+                  "industry": "Cloud Data Platform",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 72,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Cloud data platform is strategically valuable, but investors need proof of efficient growth and durable free cash flow.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Premium multiples, competition, slower enterprise spending, and execution risk.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Cybersecurity and workflow software can compound through recurring revenue.",
+                        "High gross margins and retention can create excellent long-term economics.",
+                        "The best entries usually come during growth scares or market pullbacks."
+                  ]
+            },
+            {
+                  "ticker": "IONQ",
+                  "company": "IonQ",
+                  "sector": "Quantum Computing",
+                  "industry": "Speculative Quantum Pure Play",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 65,
+                  "rating": "Speculative Watch",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "One of the better-known pure quantum names, but commercialization remains early and valuation is heavily milestone-dependent.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Very early-stage technology, dilution, uncertain commercialization, and hype cycles.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Quantum computing could become a major long-term technology platform.",
+                        "Most pure plays are speculative and should be sized smaller than core holdings.",
+                        "The focus should be milestones, cash runway, partnerships, and actual commercial demand."
+                  ]
+            },
+            {
+                  "ticker": "RGTI",
+                  "company": "Rigetti Computing",
+                  "sector": "Quantum Computing",
+                  "industry": "Speculative Quantum Pure Play",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 58,
+                  "rating": "Speculative Watch",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "High-risk quantum exposure with dilution and commercialization uncertainty; should be research-only unless thesis improves.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Very early-stage technology, dilution, uncertain commercialization, and hype cycles.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Quantum computing could become a major long-term technology platform.",
+                        "Most pure plays are speculative and should be sized smaller than core holdings.",
+                        "The focus should be milestones, cash runway, partnerships, and actual commercial demand."
+                  ]
+            },
+            {
+                  "ticker": "QBTS",
+                  "company": "D-Wave Quantum",
+                  "sector": "Quantum Computing",
+                  "industry": "Speculative Quantum Pure Play",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 60,
+                  "rating": "Speculative Watch",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Quantum optionality is interesting, but durable revenue and profitability remain unproven.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Very early-stage technology, dilution, uncertain commercialization, and hype cycles.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Quantum computing could become a major long-term technology platform.",
+                        "Most pure plays are speculative and should be sized smaller than core holdings.",
+                        "The focus should be milestones, cash runway, partnerships, and actual commercial demand."
+                  ]
+            },
+            {
+                  "ticker": "QUBT",
+                  "company": "Quantum Computing Inc.",
+                  "sector": "Quantum Computing",
+                  "industry": "Speculative Quantum Pure Play",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 52,
+                  "rating": "Speculative Watch",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Very speculative quantum watchlist name; requires strict risk controls and evidence of real commercial traction.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Very early-stage technology, dilution, uncertain commercialization, and hype cycles.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Quantum computing could become a major long-term technology platform.",
+                        "Most pure plays are speculative and should be sized smaller than core holdings.",
+                        "The focus should be milestones, cash runway, partnerships, and actual commercial demand."
+                  ]
+            },
+            {
+                  "ticker": "LLY",
+                  "company": "Eli Lilly",
+                  "sector": "Healthcare",
+                  "industry": "Pharma / GLP-1 / Oncology",
+                  "group": "universe",
+                  "spotlight": true,
+                  "score": 87,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Excellent pipeline and GLP-1 leadership, but premium valuation means entries matter.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Patent cliffs, regulatory risk, reimbursement pressure, and clinical-trial uncertainty.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Healthcare adds diversification away from pure tech exposure.",
+                        "The best companies combine pricing power, innovation, and recurring demand.",
+                        "Quality healthcare names can compound even when the economy slows."
+                  ]
+            },
+            {
+                  "ticker": "NVO",
+                  "company": "Novo Nordisk",
+                  "sector": "Healthcare",
+                  "industry": "Pharma / GLP-1",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 84,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "GLP-1 franchise and global scale are valuable, but competition and valuation need monitoring.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Patent cliffs, regulatory risk, reimbursement pressure, and clinical-trial uncertainty.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Healthcare adds diversification away from pure tech exposure.",
+                        "The best companies combine pricing power, innovation, and recurring demand.",
+                        "Quality healthcare names can compound even when the economy slows."
+                  ]
+            },
+            {
+                  "ticker": "UNH",
+                  "company": "UnitedHealth Group",
+                  "sector": "Healthcare",
+                  "industry": "Managed Care",
+                  "group": "universe",
+                  "spotlight": true,
+                  "score": 82,
+                  "rating": "Buy / Accumulate",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "Potential value if regulatory and margin concerns are already over-discounted relative to scale and cash-flow durability.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Patent cliffs, regulatory risk, reimbursement pressure, and clinical-trial uncertainty.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Healthcare adds diversification away from pure tech exposure.",
+                        "The best companies combine pricing power, innovation, and recurring demand.",
+                        "Quality healthcare names can compound even when the economy slows."
+                  ]
+            },
+            {
+                  "ticker": "TMO",
+                  "company": "Thermo Fisher Scientific",
+                  "sector": "Healthcare",
+                  "industry": "Life Sciences Tools",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 84,
+                  "rating": "Buy / Accumulate",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "High-quality life-sciences compounder that can be attractive when biotech/diagnostics spending is weak.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Patent cliffs, regulatory risk, reimbursement pressure, and clinical-trial uncertainty.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Healthcare adds diversification away from pure tech exposure.",
+                        "The best companies combine pricing power, innovation, and recurring demand.",
+                        "Quality healthcare names can compound even when the economy slows."
+                  ]
+            },
+            {
+                  "ticker": "ISRG",
+                  "company": "Intuitive Surgical",
+                  "sector": "Healthcare",
+                  "industry": "Robotic Surgery",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 85,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Robotic surgery leader with installed-base economics and durable procedure growth, but rarely cheap.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Patent cliffs, regulatory risk, reimbursement pressure, and clinical-trial uncertainty.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Healthcare adds diversification away from pure tech exposure.",
+                        "The best companies combine pricing power, innovation, and recurring demand.",
+                        "Quality healthcare names can compound even when the economy slows."
+                  ]
+            },
+            {
+                  "ticker": "SYK",
+                  "company": "Stryker",
+                  "sector": "Healthcare",
+                  "industry": "Medical Devices",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 83,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Strong med-tech compounder with recurring procedure demand and disciplined execution.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Patent cliffs, regulatory risk, reimbursement pressure, and clinical-trial uncertainty.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Healthcare adds diversification away from pure tech exposure.",
+                        "The best companies combine pricing power, innovation, and recurring demand.",
+                        "Quality healthcare names can compound even when the economy slows."
+                  ]
+            },
+            {
+                  "ticker": "ABT",
+                  "company": "Abbott Laboratories",
+                  "sector": "Healthcare",
+                  "industry": "Devices / Diagnostics / Nutrition",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 80,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Diversified healthcare business with quality and stability, useful for reducing tech concentration.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Patent cliffs, regulatory risk, reimbursement pressure, and clinical-trial uncertainty.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Healthcare adds diversification away from pure tech exposure.",
+                        "The best companies combine pricing power, innovation, and recurring demand.",
+                        "Quality healthcare names can compound even when the economy slows."
+                  ]
+            },
+            {
+                  "ticker": "DHR",
+                  "company": "Danaher",
+                  "sector": "Healthcare",
+                  "industry": "Life Sciences Tools",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 82,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "High-quality life-science platform with strong operating culture, but needs end-market recovery.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Patent cliffs, regulatory risk, reimbursement pressure, and clinical-trial uncertainty.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Healthcare adds diversification away from pure tech exposure.",
+                        "The best companies combine pricing power, innovation, and recurring demand.",
+                        "Quality healthcare names can compound even when the economy slows."
+                  ]
+            },
+            {
+                  "ticker": "VRTX",
+                  "company": "Vertex Pharmaceuticals",
+                  "sector": "Healthcare",
+                  "industry": "Biotech / Rare Disease",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 83,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Durable cystic fibrosis cash flows and pipeline optionality create high-quality biotech exposure.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Patent cliffs, regulatory risk, reimbursement pressure, and clinical-trial uncertainty.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Healthcare adds diversification away from pure tech exposure.",
+                        "The best companies combine pricing power, innovation, and recurring demand.",
+                        "Quality healthcare names can compound even when the economy slows."
+                  ]
+            },
+            {
+                  "ticker": "REGN",
+                  "company": "Regeneron",
+                  "sector": "Healthcare",
+                  "industry": "Biotech",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 81,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Innovation-focused biotech with cash flow and pipeline depth, but product concentration must be monitored.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Patent cliffs, regulatory risk, reimbursement pressure, and clinical-trial uncertainty.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Healthcare adds diversification away from pure tech exposure.",
+                        "The best companies combine pricing power, innovation, and recurring demand.",
+                        "Quality healthcare names can compound even when the economy slows."
+                  ]
+            },
+            {
+                  "ticker": "ASTS",
+                  "company": "AST SpaceMobile",
+                  "sector": "Space & Defense",
+                  "industry": "Satellite Broadband",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 66,
+                  "rating": "Wait / Do Not Chase",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Huge upside if direct-to-device satellite broadband works at scale, but commercial and funding risk are high.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Contract timing, technical execution, government budgets, and high capital requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Defense, satellites, launch, and space infrastructure have long-term demand drivers.",
+                        "Government and commercial contracts can support durable revenue if execution is strong.",
+                        "Speculative space names require smaller sizing and proof of cash-flow progress."
+                  ]
+            },
+            {
+                  "ticker": "LUNR",
+                  "company": "Intuitive Machines",
+                  "sector": "Space & Defense",
+                  "industry": "Lunar Infrastructure",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 62,
+                  "rating": "Wait / Do Not Chase",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Interesting space infrastructure optionality, but high execution risk and speculative contract timing.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Contract timing, technical execution, government budgets, and high capital requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Defense, satellites, launch, and space infrastructure have long-term demand drivers.",
+                        "Government and commercial contracts can support durable revenue if execution is strong.",
+                        "Speculative space names require smaller sizing and proof of cash-flow progress."
+                  ]
+            },
+            {
+                  "ticker": "RDW",
+                  "company": "Redwire",
+                  "sector": "Space & Defense",
+                  "industry": "Space Infrastructure",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 64,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Speculative space supplier with upside if space infrastructure spending grows and margins improve.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Contract timing, technical execution, government budgets, and high capital requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Defense, satellites, launch, and space infrastructure have long-term demand drivers.",
+                        "Government and commercial contracts can support durable revenue if execution is strong.",
+                        "Speculative space names require smaller sizing and proof of cash-flow progress."
+                  ]
+            },
+            {
+                  "ticker": "LMT",
+                  "company": "Lockheed Martin",
+                  "sector": "Space & Defense",
+                  "industry": "Defense Prime",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 80,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Defense cash flow and backlog add stability, but growth is usually slower than high-upside names.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Contract timing, technical execution, government budgets, and high capital requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Defense, satellites, launch, and space infrastructure have long-term demand drivers.",
+                        "Government and commercial contracts can support durable revenue if execution is strong.",
+                        "Speculative space names require smaller sizing and proof of cash-flow progress."
+                  ]
+            },
+            {
+                  "ticker": "NOC",
+                  "company": "Northrop Grumman",
+                  "sector": "Space & Defense",
+                  "industry": "Defense / Space Systems",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 81,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Defense and space exposure with durable government demand, but budget and contract execution matter.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Contract timing, technical execution, government budgets, and high capital requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Defense, satellites, launch, and space infrastructure have long-term demand drivers.",
+                        "Government and commercial contracts can support durable revenue if execution is strong.",
+                        "Speculative space names require smaller sizing and proof of cash-flow progress."
+                  ]
+            },
+            {
+                  "ticker": "RTX",
+                  "company": "RTX",
+                  "sector": "Space & Defense",
+                  "industry": "Aerospace / Defense",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 79,
+                  "rating": "Watch / Buy Small",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "Potential value if aerospace/defense cash flows normalize and prior execution issues are over-discounted.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Contract timing, technical execution, government budgets, and high capital requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Defense, satellites, launch, and space infrastructure have long-term demand drivers.",
+                        "Government and commercial contracts can support durable revenue if execution is strong.",
+                        "Speculative space names require smaller sizing and proof of cash-flow progress."
+                  ]
+            },
+            {
+                  "ticker": "XOM",
+                  "company": "Exxon Mobil",
+                  "sector": "Energy & Power",
+                  "industry": "Integrated Energy",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 80,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Scale, low-cost assets, and capital discipline make it a quality energy anchor, but oil prices drive cycles.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, policy changes, interest rates, and power-price volatility.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Energy and power diversify the dashboard away from software and semis.",
+                        "Electricity demand from data centers can benefit power generators and grid names.",
+                        "Cash flow discipline matters more than hype in this sector."
+                  ]
+            },
+            {
+                  "ticker": "CVX",
+                  "company": "Chevron",
+                  "sector": "Energy & Power",
+                  "industry": "Integrated Energy",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 78,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "High-quality integrated energy exposure with dividends, but commodity cycles limit predictability.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, policy changes, interest rates, and power-price volatility.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Energy and power diversify the dashboard away from software and semis.",
+                        "Electricity demand from data centers can benefit power generators and grid names.",
+                        "Cash flow discipline matters more than hype in this sector."
+                  ]
+            },
+            {
+                  "ticker": "LNG",
+                  "company": "Cheniere Energy",
+                  "sector": "Energy & Power",
+                  "industry": "LNG Export",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 81,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "LNG export infrastructure has long-term global demand support, but contracts and commodity dynamics matter.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, policy changes, interest rates, and power-price volatility.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Energy and power diversify the dashboard away from software and semis.",
+                        "Electricity demand from data centers can benefit power generators and grid names.",
+                        "Cash flow discipline matters more than hype in this sector."
+                  ]
+            },
+            {
+                  "ticker": "CEG",
+                  "company": "Constellation Energy",
+                  "sector": "Energy & Power",
+                  "industry": "Nuclear / Power",
+                  "group": "universe",
+                  "spotlight": true,
+                  "score": 84,
+                  "rating": "Buy / Accumulate",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "Nuclear power can benefit from data-center electricity demand and clean baseload scarcity.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, policy changes, interest rates, and power-price volatility.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Energy and power diversify the dashboard away from software and semis.",
+                        "Electricity demand from data centers can benefit power generators and grid names.",
+                        "Cash flow discipline matters more than hype in this sector."
+                  ]
+            },
+            {
+                  "ticker": "NEE",
+                  "company": "NextEra Energy",
+                  "sector": "Energy & Power",
+                  "industry": "Renewables / Utility",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 78,
+                  "rating": "Watch / Buy Small",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "Potential value if renewable/utility sentiment is weak and interest-rate pressure fades.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, policy changes, interest rates, and power-price volatility.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Energy and power diversify the dashboard away from software and semis.",
+                        "Electricity demand from data centers can benefit power generators and grid names.",
+                        "Cash flow discipline matters more than hype in this sector."
+                  ]
+            },
+            {
+                  "ticker": "VST",
+                  "company": "Vistra",
+                  "sector": "Energy & Power",
+                  "industry": "Power Generation",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 80,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Power demand and generation scarcity can support cash flow, but power prices are volatile.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, policy changes, interest rates, and power-price volatility.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Energy and power diversify the dashboard away from software and semis.",
+                        "Electricity demand from data centers can benefit power generators and grid names.",
+                        "Cash flow discipline matters more than hype in this sector."
+                  ]
+            },
+            {
+                  "ticker": "FSLR",
+                  "company": "First Solar",
+                  "sector": "Energy & Power",
+                  "industry": "Solar Manufacturing",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 76,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "U.S. solar manufacturing exposure is attractive, but policy and margin volatility require caution.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, policy changes, interest rates, and power-price volatility.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Energy and power diversify the dashboard away from software and semis.",
+                        "Electricity demand from data centers can benefit power generators and grid names.",
+                        "Cash flow discipline matters more than hype in this sector."
+                  ]
+            },
+            {
+                  "ticker": "JPM",
+                  "company": "JPMorgan Chase",
+                  "sector": "Financials",
+                  "industry": "Banking",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 84,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Best-in-class bank with scale, deposits, and capital strength, but credit cycle and rates matter.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Credit losses, interest-rate swings, regulation, and economic-cycle sensitivity.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Financials can provide value, dividends, and capital-return potential.",
+                        "Best-in-class franchises benefit from scale, deposits, payment networks, or asset management.",
+                        "Valuation should be judged against credit quality, capital levels, and normalized earnings."
+                  ]
+            },
+            {
+                  "ticker": "BRK.B",
+                  "company": "Berkshire Hathaway",
+                  "sector": "Financials",
+                  "industry": "Conglomerate / Insurance",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 86,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "High-quality capital allocator with insurance float and diversified operating businesses.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Credit losses, interest-rate swings, regulation, and economic-cycle sensitivity.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Financials can provide value, dividends, and capital-return potential.",
+                        "Best-in-class franchises benefit from scale, deposits, payment networks, or asset management.",
+                        "Valuation should be judged against credit quality, capital levels, and normalized earnings."
+                  ]
+            },
+            {
+                  "ticker": "V",
+                  "company": "Visa",
+                  "sector": "Financials",
+                  "industry": "Payments Network",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 85,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Asset-light global payments toll road with elite margins, but often trades at a premium.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Credit losses, interest-rate swings, regulation, and economic-cycle sensitivity.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Financials can provide value, dividends, and capital-return potential.",
+                        "Best-in-class franchises benefit from scale, deposits, payment networks, or asset management.",
+                        "Valuation should be judged against credit quality, capital levels, and normalized earnings."
+                  ]
+            },
+            {
+                  "ticker": "MA",
+                  "company": "Mastercard",
+                  "sector": "Financials",
+                  "industry": "Payments Network",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 85,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Global payments compounder with high margins and strong network effects.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Credit losses, interest-rate swings, regulation, and economic-cycle sensitivity.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Financials can provide value, dividends, and capital-return potential.",
+                        "Best-in-class franchises benefit from scale, deposits, payment networks, or asset management.",
+                        "Valuation should be judged against credit quality, capital levels, and normalized earnings."
+                  ]
+            },
+            {
+                  "ticker": "BLK",
+                  "company": "BlackRock",
+                  "sector": "Financials",
+                  "industry": "Asset Management",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 82,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Scale ETF and asset-management platform with long-term market participation upside.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Credit losses, interest-rate swings, regulation, and economic-cycle sensitivity.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Financials can provide value, dividends, and capital-return potential.",
+                        "Best-in-class franchises benefit from scale, deposits, payment networks, or asset management.",
+                        "Valuation should be judged against credit quality, capital levels, and normalized earnings."
+                  ]
+            },
+            {
+                  "ticker": "BX",
+                  "company": "Blackstone",
+                  "sector": "Financials",
+                  "industry": "Alternative Assets",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 79,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Alternatives leader with long-term asset-growth potential but cycle and fee-realization risk.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Credit losses, interest-rate swings, regulation, and economic-cycle sensitivity.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Financials can provide value, dividends, and capital-return potential.",
+                        "Best-in-class franchises benefit from scale, deposits, payment networks, or asset management.",
+                        "Valuation should be judged against credit quality, capital levels, and normalized earnings."
+                  ]
+            },
+            {
+                  "ticker": "AXP",
+                  "company": "American Express",
+                  "sector": "Financials",
+                  "industry": "Payments / Credit",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 80,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Premium consumer card franchise with strong brand and spend economics, but credit risk matters.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Credit losses, interest-rate swings, regulation, and economic-cycle sensitivity.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Financials can provide value, dividends, and capital-return potential.",
+                        "Best-in-class franchises benefit from scale, deposits, payment networks, or asset management.",
+                        "Valuation should be judged against credit quality, capital levels, and normalized earnings."
+                  ]
+            },
+            {
+                  "ticker": "COF",
+                  "company": "Capital One",
+                  "sector": "Financials",
+                  "industry": "Consumer Credit",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 74,
+                  "rating": "Watch / Buy Small",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "Potential value if credit fears are overdone, but consumer credit risk needs close monitoring.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Credit losses, interest-rate swings, regulation, and economic-cycle sensitivity.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Financials can provide value, dividends, and capital-return potential.",
+                        "Best-in-class franchises benefit from scale, deposits, payment networks, or asset management.",
+                        "Valuation should be judged against credit quality, capital levels, and normalized earnings."
+                  ]
+            },
+            {
+                  "ticker": "AMZN",
+                  "company": "Amazon",
+                  "sector": "Consumer",
+                  "industry": "E-commerce / Cloud / Ads",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 86,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "AWS, advertising, logistics scale, and e-commerce optionality make it a core-quality compounder.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Consumer spending slowdowns, margin pressure, valuation risk, and competition.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Great consumer brands can compound through pricing power and loyal demand.",
+                        "Marketplace, travel, retail, and restaurant leaders can benefit from scale.",
+                        "Buy discipline matters because premium consumer names often look expensive."
+                  ]
+            },
+            {
+                  "ticker": "COST",
+                  "company": "Costco",
+                  "sector": "Consumer",
+                  "industry": "Membership Retail",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 84,
+                  "rating": "Wait / Do Not Chase",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Exceptional retailer and membership model, but valuation often prices in perfection.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Consumer spending slowdowns, margin pressure, valuation risk, and competition.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Great consumer brands can compound through pricing power and loyal demand.",
+                        "Marketplace, travel, retail, and restaurant leaders can benefit from scale.",
+                        "Buy discipline matters because premium consumer names often look expensive."
+                  ]
+            },
+            {
+                  "ticker": "HD",
+                  "company": "Home Depot",
+                  "sector": "Consumer",
+                  "industry": "Home Improvement Retail",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 79,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "High-quality retailer tied to housing repair/remodel cycle; better entry if housing weakness pressures shares.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Consumer spending slowdowns, margin pressure, valuation risk, and competition.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Great consumer brands can compound through pricing power and loyal demand.",
+                        "Marketplace, travel, retail, and restaurant leaders can benefit from scale.",
+                        "Buy discipline matters because premium consumer names often look expensive."
+                  ]
+            },
+            {
+                  "ticker": "MCD",
+                  "company": "McDonald's",
+                  "sector": "Consumer",
+                  "industry": "Restaurants",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 80,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Global franchise model and pricing power add defensive consumer exposure.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Consumer spending slowdowns, margin pressure, valuation risk, and competition.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Great consumer brands can compound through pricing power and loyal demand.",
+                        "Marketplace, travel, retail, and restaurant leaders can benefit from scale.",
+                        "Buy discipline matters because premium consumer names often look expensive."
+                  ]
+            },
+            {
+                  "ticker": "CMG",
+                  "company": "Chipotle",
+                  "sector": "Consumer",
+                  "industry": "Restaurants / Fast Casual",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 77,
+                  "rating": "Wait / Do Not Chase",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Great brand and unit growth, but premium valuation leaves little margin of safety.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Consumer spending slowdowns, margin pressure, valuation risk, and competition.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Great consumer brands can compound through pricing power and loyal demand.",
+                        "Marketplace, travel, retail, and restaurant leaders can benefit from scale.",
+                        "Buy discipline matters because premium consumer names often look expensive."
+                  ]
+            },
+            {
+                  "ticker": "BKNG",
+                  "company": "Booking Holdings",
+                  "sector": "Consumer",
+                  "industry": "Online Travel",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 83,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "High-margin travel marketplace with strong cash flow, but travel cycles and valuation matter.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Consumer spending slowdowns, margin pressure, valuation risk, and competition.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Great consumer brands can compound through pricing power and loyal demand.",
+                        "Marketplace, travel, retail, and restaurant leaders can benefit from scale.",
+                        "Buy discipline matters because premium consumer names often look expensive."
+                  ]
+            },
+            {
+                  "ticker": "MELI",
+                  "company": "MercadoLibre",
+                  "sector": "Consumer",
+                  "industry": "LatAm E-commerce / Fintech",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 84,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "High-growth Latin America platform with e-commerce and fintech optionality, but valuation and FX risk matter.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Consumer spending slowdowns, margin pressure, valuation risk, and competition.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Great consumer brands can compound through pricing power and loyal demand.",
+                        "Marketplace, travel, retail, and restaurant leaders can benefit from scale.",
+                        "Buy discipline matters because premium consumer names often look expensive."
+                  ]
+            },
+            {
+                  "ticker": "TSLA",
+                  "company": "Tesla",
+                  "sector": "Consumer",
+                  "industry": "EV / Energy / Autonomy",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 72,
+                  "rating": "Wait / Do Not Chase",
+                  "valuation": "overvalued",
+                  "valuationLabel": "Expensive / wait for pullback",
+                  "keyReason": "Powerful brand and autonomy optionality, but valuation depends on high-confidence future growth assumptions.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Consumer spending slowdowns, margin pressure, valuation risk, and competition.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Great consumer brands can compound through pricing power and loyal demand.",
+                        "Marketplace, travel, retail, and restaurant leaders can benefit from scale.",
+                        "Buy discipline matters because premium consumer names often look expensive."
+                  ]
+            },
+            {
+                  "ticker": "CAT",
+                  "company": "Caterpillar",
+                  "sector": "Industrials & Infrastructure",
+                  "industry": "Machinery",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 80,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Infrastructure, mining, energy, and dealer network support durability, but it remains cyclical.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, input costs, rates, and project timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Industrial leaders benefit from infrastructure, automation, aerospace, and electrification.",
+                        "Strong backlog, pricing power, and aftermarket/service revenue improve durability.",
+                        "This sector helps reduce overreliance on mega-cap tech."
+                  ]
+            },
+            {
+                  "ticker": "DE",
+                  "company": "Deere",
+                  "sector": "Industrials & Infrastructure",
+                  "industry": "Agriculture Equipment",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 78,
+                  "rating": "Watch / Buy Small",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "Potential value if agriculture-cycle weakness is over-discounted versus long-term precision-ag advantages.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, input costs, rates, and project timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Industrial leaders benefit from infrastructure, automation, aerospace, and electrification.",
+                        "Strong backlog, pricing power, and aftermarket/service revenue improve durability.",
+                        "This sector helps reduce overreliance on mega-cap tech."
+                  ]
+            },
+            {
+                  "ticker": "URI",
+                  "company": "United Rentals",
+                  "sector": "Industrials & Infrastructure",
+                  "industry": "Equipment Rental",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 82,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Scale leader in equipment rental with infrastructure and nonresidential construction exposure.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, input costs, rates, and project timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Industrial leaders benefit from infrastructure, automation, aerospace, and electrification.",
+                        "Strong backlog, pricing power, and aftermarket/service revenue improve durability.",
+                        "This sector helps reduce overreliance on mega-cap tech."
+                  ]
+            },
+            {
+                  "ticker": "HON",
+                  "company": "Honeywell",
+                  "sector": "Industrials & Infrastructure",
+                  "industry": "Industrial Technology",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 79,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Diversified industrial technology and aerospace exposure provide quality, but growth can be moderate.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, input costs, rates, and project timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Industrial leaders benefit from infrastructure, automation, aerospace, and electrification.",
+                        "Strong backlog, pricing power, and aftermarket/service revenue improve durability.",
+                        "This sector helps reduce overreliance on mega-cap tech."
+                  ]
+            },
+            {
+                  "ticker": "GE",
+                  "company": "GE Aerospace",
+                  "sector": "Industrials & Infrastructure",
+                  "industry": "Aerospace Engines",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 84,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Aerospace engine installed base and services can support durable cash flows.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, input costs, rates, and project timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Industrial leaders benefit from infrastructure, automation, aerospace, and electrification.",
+                        "Strong backlog, pricing power, and aftermarket/service revenue improve durability.",
+                        "This sector helps reduce overreliance on mega-cap tech."
+                  ]
+            },
+            {
+                  "ticker": "ETN",
+                  "company": "Eaton",
+                  "sector": "Industrials & Infrastructure",
+                  "industry": "Electrical / Power Equipment",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 86,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Electrification, grid demand, and data-center power needs make it a high-quality infrastructure compounder.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, input costs, rates, and project timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Industrial leaders benefit from infrastructure, automation, aerospace, and electrification.",
+                        "Strong backlog, pricing power, and aftermarket/service revenue improve durability.",
+                        "This sector helps reduce overreliance on mega-cap tech."
+                  ]
+            },
+            {
+                  "ticker": "PH",
+                  "company": "Parker-Hannifin",
+                  "sector": "Industrials & Infrastructure",
+                  "industry": "Motion & Control",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 82,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Industrial quality compounder with pricing power and strong operating execution.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, input costs, rates, and project timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Industrial leaders benefit from infrastructure, automation, aerospace, and electrification.",
+                        "Strong backlog, pricing power, and aftermarket/service revenue improve durability.",
+                        "This sector helps reduce overreliance on mega-cap tech."
+                  ]
+            },
+            {
+                  "ticker": "WM",
+                  "company": "Waste Management",
+                  "sector": "Industrials & Infrastructure",
+                  "industry": "Waste / Environmental Services",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 81,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Defensive waste business with pricing power and durable demand.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Cyclicality, input costs, rates, and project timing.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Industrial leaders benefit from infrastructure, automation, aerospace, and electrification.",
+                        "Strong backlog, pricing power, and aftermarket/service revenue improve durability.",
+                        "This sector helps reduce overreliance on mega-cap tech."
+                  ]
+            },
+            {
+                  "ticker": "LIN",
+                  "company": "Linde",
+                  "sector": "Materials & Real Assets",
+                  "industry": "Industrial Gases",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 85,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "High-quality industrial gases leader with sticky customer relationships and strong margins.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, housing/building exposure, and global demand swings.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Materials add inflation and infrastructure exposure to the dashboard.",
+                        "High-quality operators can compound when they hold pricing power and cost discipline.",
+                        "Cyclical names should be bought when pessimism is high, not when commodities are euphoric."
+                  ]
+            },
+            {
+                  "ticker": "SHW",
+                  "company": "Sherwin-Williams",
+                  "sector": "Materials & Real Assets",
+                  "industry": "Paint / Coatings",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 82,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Premium coatings brand with pricing power and housing/remodel exposure.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, housing/building exposure, and global demand swings.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Materials add inflation and infrastructure exposure to the dashboard.",
+                        "High-quality operators can compound when they hold pricing power and cost discipline.",
+                        "Cyclical names should be bought when pessimism is high, not when commodities are euphoric."
+                  ]
+            },
+            {
+                  "ticker": "FCX",
+                  "company": "Freeport-McMoRan",
+                  "sector": "Materials & Real Assets",
+                  "industry": "Copper",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 76,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Copper demand can benefit from electrification, but commodity cycles are volatile.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, housing/building exposure, and global demand swings.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Materials add inflation and infrastructure exposure to the dashboard.",
+                        "High-quality operators can compound when they hold pricing power and cost discipline.",
+                        "Cyclical names should be bought when pessimism is high, not when commodities are euphoric."
+                  ]
+            },
+            {
+                  "ticker": "NUE",
+                  "company": "Nucor",
+                  "sector": "Materials & Real Assets",
+                  "industry": "Steel",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 77,
+                  "rating": "Watch / Buy Small",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "Potential value if steel-cycle pessimism is overdone and U.S. infrastructure demand holds.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Commodity cycles, housing/building exposure, and global demand swings.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Materials add inflation and infrastructure exposure to the dashboard.",
+                        "High-quality operators can compound when they hold pricing power and cost discipline.",
+                        "Cyclical names should be bought when pessimism is high, not when commodities are euphoric."
+                  ]
+            },
+            {
+                  "ticker": "EQIX",
+                  "company": "Equinix",
+                  "sector": "REITs & Digital Infrastructure",
+                  "industry": "Data Center REIT",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 82,
+                  "rating": "Buy on Weakness",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Global interconnection/data-center platform benefits from cloud and AI demand, but rates and capex matter.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Interest rates, leverage, tenant concentration, and capex requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Digital infrastructure can benefit from AI, cloud, wireless, and data traffic.",
+                        "REITs can add income and real-asset exposure if balance sheets are strong.",
+                        "Higher rates can pressure valuations, so buy-under discipline is important."
+                  ]
+            },
+            {
+                  "ticker": "DLR",
+                  "company": "Digital Realty",
+                  "sector": "REITs & Digital Infrastructure",
+                  "industry": "Data Center REIT",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 79,
+                  "rating": "Watchlist",
+                  "valuation": "fair",
+                  "valuationLabel": "Fair / watchlist",
+                  "keyReason": "Data-center demand is attractive, but leverage, funding costs, and power availability matter.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Interest rates, leverage, tenant concentration, and capex requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Digital infrastructure can benefit from AI, cloud, wireless, and data traffic.",
+                        "REITs can add income and real-asset exposure if balance sheets are strong.",
+                        "Higher rates can pressure valuations, so buy-under discipline is important."
+                  ]
+            },
+            {
+                  "ticker": "AMT",
+                  "company": "American Tower",
+                  "sector": "REITs & Digital Infrastructure",
+                  "industry": "Tower REIT",
+                  "group": "universe",
+                  "spotlight": false,
+                  "score": 78,
+                  "rating": "Watch / Buy Small",
+                  "valuation": "undervalued",
+                  "valuationLabel": "Potentially undervalued",
+                  "keyReason": "Potential value if rate pressure is over-discounted relative to long-term wireless infrastructure demand.",
+                  "fairValue": "Live update needed",
+                  "buyUnder": "Live update needed",
+                  "mainRisk": "Interest rates, leverage, tenant concentration, and capex requirements.",
+                  "betterThanCore": "Only if valuation is confirmed better than simply adding to VOO/QQQM/MSFT/GOOGL/NVDA.",
+                  "thesis": [
+                        "Digital infrastructure can benefit from AI, cloud, wireless, and data traffic.",
+                        "REITs can add income and real-asset exposure if balance sheets are strong.",
+                        "Higher rates can pressure valuations, so buy-under discipline is important."
+                  ]
+            }
       ]
-    };
+};
+    let activeFilter = "all";
+    let activeSector = "all";
+    let query = "";
 
-    function valuationClass(v) {
-      if (v === "undervalued") return "undervalued";
-      if (v === "overvalued") return "overvalued";
-      return "fair";
+    const byId = id => document.getElementById(id);
+    const vc = v => v === "undervalued" ? "undervalued" : v === "overvalued" ? "overvalued" : "fair";
+    const icon = v => v === "undervalued" ? "↗" : v === "overvalued" ? "⚠" : "≈";
+    const riskClass = level => String(level||"").toLowerCase().includes("high") ? "high" : String(level||"").toLowerCase().includes("low") ? "low" : "medium";
+
+    function stockMatches(s) {
+      const q = query.trim().toLowerCase();
+      const filterOk = activeFilter === "all" || s.valuation === activeFilter || s.group === activeFilter;
+      const sectorOk = activeSector === "all" || s.sector === activeSector;
+      const searchOk = !q || [s.ticker,s.company,s.sector,s.industry,s.rating,s.valuationLabel].join(" ").toLowerCase().includes(q);
+      return filterOk && sectorOk && searchOk;
     }
 
-    function valuationIcon(v) {
-      if (v === "undervalued") return "↗";
-      if (v === "overvalued") return "⚠";
-      return "≈";
+    function renderHero() {
+      byId("marketStatusHero").textContent = report.marketStatus;
+      byId("marketSummaryHero").textContent = report.marketSummary;
+      byId("lastUpdatedHero").textContent = report.date;
+      byId("confidenceHero").textContent = report.confidence;
+      byId("decisionHeadline").textContent = report.decisionHeadline;
+      byId("decisionText").textContent = report.decisionText;
+      byId("portfolioHeadline").textContent = report.portfolioHeadline;
+      byId("portfolioNote").textContent = report.portfolioNote;
+      byId("dataChecked").textContent = report.dataChecked;
+      byId("uncertaintyNotes").textContent = report.uncertaintyNotes;
+      byId("summaryCards").innerHTML = report.cards.map(c => `<article class="card"><div class="metric-label">${c.label}</div><div class="metric-value">${c.value}</div><div class="metric-note">${c.note}</div></article>`).join("");
+      byId("executiveBullets").innerHTML = report.executiveBullets.map(x => `<li><span class="icon">${x.icon}</span><span><b>${x.title}:</b> ${x.text}</span></li>`).join("");
     }
 
-    function renderSummary() {
-      document.getElementById("marketStatusHero").textContent = report.marketStatus;
-      document.getElementById("marketSummaryHero").textContent = report.marketSummary;
-      const wrap = document.getElementById("summaryCards");
-      wrap.innerHTML = report.cards.map(card => `
-        <article class="card">
-          <div class="metric-label">${card.label}</div>
-          <div class="metric-value">${card.value}</div>
-          <div class="metric-note">${card.note}</div>
-        </article>
-      `).join("");
+    function renderFilters() {
+      const filters = [
+        ["all","All"],["undervalued","Undervalued"],["fair","Fair"],["overvalued","Overvalued"],["core","Core"],["universe","Universe"]
+      ];
+      byId("filters").innerHTML = filters.map(([k,v]) => `<button class="filter ${activeFilter===k?"active":""}" data-filter="${k}">${v}</button>`).join("");
+      const sectors = ["all", ...Array.from(new Set(report.stocks.map(s => s.sector))).sort()];
+      byId("sectorFilters").innerHTML = sectors.map(s => `<button class="filter ${activeSector===s?"active":""}" data-sector="${s}">${s==="all"?"All sectors":s}</button>`).join("");
+      document.querySelectorAll("[data-filter]").forEach(b => b.onclick = () => { activeFilter=b.dataset.filter; renderAll(); });
+      document.querySelectorAll("[data-sector]").forEach(b => b.onclick = () => { activeSector=b.dataset.sector; renderAll(); });
     }
 
-    function renderTable(filter = "all") {
-      const rows = report.stocks.filter(s => {
-        if (filter === "all") return true;
-        if (filter === "new" || filter === "core") return s.group === filter;
-        return s.valuation === filter;
+    function renderSectors() {
+      const map = {};
+      report.stocks.forEach(s => {
+        if(!map[s.sector]) map[s.sector] = {count:0, top:[], undervalued:0};
+        map[s.sector].count++;
+        if(s.valuation==="undervalued") map[s.sector].undervalued++;
+        map[s.sector].top.push(s);
       });
-
-      document.getElementById("stockTable").innerHTML = rows.map(s => `
-        <tr>
-          <td>
-            <div class="ticker">${s.ticker}</div>
-            <div class="company">${s.company}</div>
-            <div style="margin-top:8px;"><span class="pill ${s.group}">${s.group === "new" ? "New idea" : "Core"}</span></div>
-          </td>
-          <td><span class="score">${s.score}</span></td>
-          <td>${s.rating}</td>
-          <td><span class="pill ${valuationClass(s.valuation)}">${valuationIcon(s.valuation)} ${s.valuationLabel}</span></td>
-          <td class="reason">${s.keyReason}</td>
-          <td>${s.fairValue}</td>
-          <td><strong>${s.buyUnder}</strong></td>
-          <td class="muted">${s.mainRisk}</td>
-          <td>${s.betterThanCore}</td>
-        </tr>
-      `).join("");
+      byId("sectorCards").innerHTML = Object.entries(map).sort((a,b)=>b[1].count-a[1].count).map(([sector,info]) => {
+        const top = info.top.sort((a,b)=>b.score-a.score).slice(0,3).map(s=>s.ticker).join(", ");
+        return `<article class="card sector-card"><h3>${sector}</h3><p><b>${info.count}</b> tracked names · <b>${info.undervalued}</b> prelim undervalued</p><p style="margin-top:8px">Top scores: ${top}</p></article>`;
+      }).join("");
     }
 
-    function renderBars() {
-      const sorted = [...report.stocks].sort((a, b) => b.score - a.score);
-      document.getElementById("scoreBars").innerHTML = sorted.map(s => `
-        <div class="bar-row">
-          <div class="bar-name">${s.ticker}</div>
-          <div class="bar-track" title="${s.ticker}: ${s.score}/100">
-            <div class="bar-fill" style="--w:${s.score}%"></div>
-          </div>
-          <div class="muted">${s.score}</div>
-        </div>
-      `).join("");
+    function renderTable() {
+      const rows = report.stocks.filter(stockMatches);
+      byId("stockTable").innerHTML = rows.map(s => `<tr>
+        <td><div class="ticker">${s.ticker}</div><div class="company">${s.company}</div><div style="margin-top:8px"><span class="pill ${s.group}">${s.group==="core"?"Core":"Universe"}</span></div></td>
+        <td><div>${s.sector}</div><div class="company">${s.industry}</div></td>
+        <td><span class="score">${s.score}</span></td>
+        <td>${s.rating}</td>
+        <td><span class="pill ${vc(s.valuation)}">${icon(s.valuation)} ${s.valuationLabel}</span></td>
+        <td class="reason">${s.keyReason}</td>
+        <td>${s.fairValue}</td>
+        <td><strong>${s.buyUnder}</strong></td>
+        <td class="muted">${s.mainRisk}</td>
+      </tr>`).join("");
     }
 
-    function cardTemplate(s) {
-      return `
-        <article class="card stock-card">
-          <div class="stock-top">
-            <div>
-              <h3>${s.ticker}</h3>
-              <p>${s.company}</p>
-            </div>
-            <span class="score">${s.score}</span>
-          </div>
-          <span class="pill ${valuationClass(s.valuation)}">${valuationIcon(s.valuation)} ${s.valuationLabel}</span>
-          <div class="mini-grid">
-            <div class="mini"><div class="k">Rating</div><div class="v">${s.rating}</div></div>
-            <div class="mini"><div class="k">Buy under</div><div class="v">${s.buyUnder}</div></div>
-            <div class="mini"><div class="k">Fair value</div><div class="v">${s.fairValue}</div></div>
-            <div class="mini"><div class="k">Risk</div><div class="v">${s.mainRisk}</div></div>
-          </div>
-          <p><strong>Why:</strong> ${s.keyReason}</p>
-          <ul class="bullet-list">
-            ${s.thesis.map(item => `<li>${item}</li>`).join("")}
-          </ul>
-        </article>
-      `;
+    function card(s) {
+      return `<article class="card stock-card"><div class="stock-top"><div><h3>${s.ticker}</h3><p>${s.company}</p><p style="margin-top:4px">${s.sector} · ${s.industry}</p></div><span class="score">${s.score}</span></div>
+      <span class="pill ${vc(s.valuation)}">${icon(s.valuation)} ${s.valuationLabel}</span>
+      <div class="mini-grid"><div class="mini"><div class="k">Rating</div><div class="v">${s.rating}</div></div><div class="mini"><div class="k">Buy under</div><div class="v">${s.buyUnder}</div></div><div class="mini"><div class="k">Fair value</div><div class="v">${s.fairValue}</div></div><div class="mini"><div class="k">Risk</div><div class="v">${s.mainRisk}</div></div></div>
+      <p><strong>Why:</strong> ${s.keyReason}</p><ul class="bullet-list">${(s.thesis||[]).map(t=>`<li>${t}</li>`).join("")}</ul></article>`;
     }
 
     function renderCards() {
-      const undervalued = report.stocks.filter(s => s.valuation === "undervalued");
-      const newIdeas = report.stocks.filter(s => s.group === "new");
-      document.getElementById("undervaluedCards").innerHTML = undervalued.map(cardTemplate).join("") || `<div class="card muted">No undervalued names in this sample report.</div>`;
-      document.getElementById("newIdeaCards").innerHTML = newIdeas.map(cardTemplate).join("");
-      document.getElementById("reasonCards").innerHTML = report.stocks.map(cardTemplate).join("");
+      byId("undervaluedCards").innerHTML = report.stocks.filter(s=>s.valuation==="undervalued").sort((a,b)=>b.score-a.score).slice(0,18).map(card).join("");
+      byId("spotlightCards").innerHTML = report.stocks.filter(s=>s.spotlight).sort((a,b)=>b.score-a.score).map(card).join("");
+      byId("reasonCards").innerHTML = report.stocks.filter(stockMatches).sort((a,b)=>b.score-a.score).map(card).join("");
     }
 
-    function attachFilters() {
-      document.querySelectorAll(".filter").forEach(btn => {
-        btn.addEventListener("click", () => {
-          document.querySelectorAll(".filter").forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-          renderTable(btn.dataset.filter);
-        });
-      });
+    function renderBars() {
+      const top = report.stocks.filter(stockMatches).sort((a,b)=>b.score-a.score).slice(0,25);
+      byId("scoreBars").innerHTML = top.map(s => `<div class="bar-row"><div class="bar-name">${s.ticker}</div><div class="bar-track" title="${s.ticker}: ${s.score}/100"><div class="bar-fill" style="--w:${s.score}%"></div></div><div class="muted">${s.score}</div></div>`).join("");
     }
 
-    renderSummary();
-    renderTable();
-    renderBars();
-    renderCards();
-    attachFilters();
+    function renderAllocation() {
+      byId("allocationRows").innerHTML = report.allocation.map(r => `<div class="allocation-row"><div class="bar-name">${r.bucket}</div><div class="bar-track"><div class="bar-fill" style="--w:${r.percent}%"></div></div><div class="muted">${r.percent}%</div><div></div><div class="muted" style="grid-column:2/span 2;margin-top:-8px;font-size:.86rem">${r.note}</div></div>`).join("");
+    }
+
+    function renderRisks() {
+      byId("riskCards").innerHTML = report.risks.map(r => `<article class="card risk-card"><h3>${r.name}<span class="pill ${riskClass(r.level)}">${r.level}</span></h3><p>${r.description}</p></article>`).join("");
+      byId("catalystCards").innerHTML = report.catalysts.map(c => `<article class="card"><span class="date-badge">${c.date}</span><div class="ticker" style="margin-top:10px">${c.ticker}</div><p class="muted">${c.event}</p></article>`).join("");
+    }
+
+    function renderAll() {
+      renderFilters(); renderSectors(); renderTable(); renderBars(); renderCards(); renderAllocation(); renderRisks();
+    }
+    byId("searchBox").addEventListener("input", e => { query = e.target.value; renderAll(); });
+    renderHero(); renderAll();
   </script>
 </body>
 </html>
