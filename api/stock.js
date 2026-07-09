@@ -5,10 +5,12 @@
 
 export default async function handler(req, res) {
   const allowedOrigins = new Set([
-    "https://blakeb22.github.io",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000"
-  ]);
+  "https://blakeb22.github.io",
+  "https://stock-dashboard-blake22.vercel.app",
+  "https://stock-dashboard-mmhuvcnle-blake22.vercel.app",
+  "http://localhost:8000",
+  "http://127.0.0.1:8000"
+]);
 
   const origin = req.headers.origin || "";
   res.setHeader(
