@@ -4,19 +4,20 @@
 // Uses Finnhub first, then Yahoo chart fallback for quotes.
 
 export default async function handler(req, res) {
-  const allowedOrigins = new Set([
+const allowedOrigins = new Set([
   "https://blakeb22.github.io",
   "https://stock-dashboard-blake22.vercel.app",
   "https://stock-dashboard-mmhuvcnle-blake22.vercel.app",
+  "https://stock-dashboard-azure-kappa.vercel.app",
   "http://localhost:8000",
   "http://127.0.0.1:8000"
 ]);
 
-  const origin = req.headers.origin || "";
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    allowedOrigins.has(origin) ? origin : "https://blakeb22.github.io"
-  );
+const origin = req.headers.origin || "";
+res.setHeader(
+  "Access-Control-Allow-Origin",
+  allowedOrigins.has(origin) ? origin : "https://blakeb22.github.io"
+);
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
