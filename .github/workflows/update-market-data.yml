@@ -1,0 +1,36 @@
+name: Update stock dashboard market data
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Runs every 30 minutes on weekdays during/near US market hours.
+    # GitHub cron uses UTC. This is roughly 9:07 AM-4:37 PM ET during daylight saving time.
+    - cron: "7,37 13-20 * * 1-5"
+
+permissions:
+  contents: write
+
+jobs:
+  update-market-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Update prices and valuation displays
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: python scripts/update_market_data.py
+
+      - name: Commit updated dashboard
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update dashboard market data"
+          file_pattern: index.html
+
