@@ -85,7 +85,22 @@
         <table><thead><tr><th>Stock</th><th>Sector</th><th>Score</th><th>Rating</th><th>Valuation</th><th>Key valuation reason</th><th>Fair value</th><th>Buy under</th><th>Main risk</th></tr></thead><tbody id="stockTable"></tbody></table>
       </div>
     </section>
+<section class="section" id="lookup">
+  <div class="section-head">
+    <div>
+      <h2>Any stock lookup</h2>
+      <p class="section-desc">Search any public ticker for current price, daily movement, analyst recommendations, and price-target context.</p>
+    </div>
+  </div>
 
+  <div class="card">
+    <div class="filters">
+      <input class="search-box" id="tickerLookupInput" placeholder="Search any ticker: AAPL, IREN, TSM, PLTR..." />
+      <button class="btn primary" id="tickerLookupBtn">Search stock</button>
+    </div>
+    <div id="tickerLookupResult" style="margin-top:16px"></div>
+  </div>
+</section>
     <section class="section">
       <div class="section-head"><div><h2>Score chart</h2><p class="section-desc">Top 25 strongest research candidates by score.</p></div></div>
       <div class="card chart-card"><div class="bars" id="scoreBars"></div><div class="chart-note"><strong>How to read this:</strong><br>90+ is rare. 80–89 is attractive for quality compounders. 70–79 can be useful but needs a better entry. Below 70 is speculative or needs proof.</div></div>
@@ -2265,6 +2280,93 @@
       renderFilters(); renderSectors(); renderTable(); renderBars(); renderCards(); renderAllocation(); renderRisks();
     }
     byId("searchBox").addEventListener("input", e => { query = e.target.value; renderAll(); });
+    const STOCK_LOOKUP_API = "https://stock-dashboard-blake22.vercel.app/api/stock";
+
+function fmtMoneyLookup(v) {
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return "N/A";
+  const n = Number(v);
+  return n >= 100 ? "$" + n.toFixed(2) : "$" + n.toFixed(3);
+}
+
+function fmtPctLookup(v) {
+  if (v === null || v === undefined || Number.isNaN(Number(v))) return "N/A";
+  const n = Number(v);
+  return (n > 0 ? "+" : "") + n.toFixed(2) + "%";
+}
+
+function analystClassLookup(pct) {
+  const n = Number(pct || 0);
+  if (n >= 70) return "undervalued";
+  if (n >= 45) return "fair";
+  return "overvalued";
+}
+
+async function lookupAnyTicker() {
+  const input = document.getElementById("tickerLookupInput");
+  const box = document.getElementById("tickerLookupResult");
+  const symbol = input.value.trim().toUpperCase();
+
+  if (!symbol) {
+    box.innerHTML = `<p class="muted">Type a ticker first.</p>`;
+    return;
+  }
+
+  box.innerHTML = `<p class="muted">Looking up ${symbol}...</p>`;
+
+  try {
+    const res = await fetch(`${STOCK_LOOKUP_API}?symbol=${encodeURIComponent(symbol)}`);
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      box.innerHTML = `<p class="muted">Lookup failed: ${data.error || "Unknown error"}</p>`;
+      return;
+    }
+
+    const a = data.analyst || {};
+    const q = data.quote || {};
+    const pt = data.priceTarget || {};
+    const analystClass = analystClassLookup(a.bullishPercent);
+
+    box.innerHTML = `
+      <article class="card stock-card" style="margin-top:14px">
+        <div class="stock-top">
+          <div>
+            <h3>${data.symbol}</h3>
+            <p>${data.company || data.symbol}</p>
+            <p style="margin-top:4px">${data.exchange || ""}${data.industry ? " · " + data.industry : ""}</p>
+          </div>
+          <span class="score">${a.bullishPercent ?? "—"}%</span>
+        </div>
+
+        <span class="pill ${analystClass}">
+          Analyst consensus: ${a.consensus || "Unavailable"}
+        </span>
+
+        <div class="mini-grid">
+          <div class="mini"><div class="k">Current price</div><div class="v">${fmtMoneyLookup(q.current)}</div></div>
+          <div class="mini"><div class="k">Today</div><div class="v">${fmtPctLookup(q.percentChange)}</div></div>
+          <div class="mini"><div class="k">High / Low</div><div class="v">${fmtMoneyLookup(q.high)} / ${fmtMoneyLookup(q.low)}</div></div>
+          <div class="mini"><div class="k">Previous close</div><div class="v">${fmtMoneyLookup(q.previousClose)}</div></div>
+          <div class="mini"><div class="k">Strong buy / Buy</div><div class="v">${a.strongBuy || 0} / ${a.buy || 0}</div></div>
+          <div class="mini"><div class="k">Hold</div><div class="v">${a.hold || 0}</div></div>
+          <div class="mini"><div class="k">Sell / Strong sell</div><div class="v">${a.sell || 0} / ${a.strongSell || 0}</div></div>
+          <div class="mini"><div class="k">Mean target</div><div class="v">${fmtMoneyLookup(pt.targetMean)}</div></div>
+        </div>
+
+        <p class="muted">
+          <strong>How to read it:</strong> analyst consensus is not the same as valuation. A stock can have a high Buy percentage but still be risky or expensive if the price already reflects aggressive growth.
+        </p>
+      </article>
+    `;
+  } catch (err) {
+    box.innerHTML = `<p class="muted">Lookup failed. Check the Vercel API URL and try again.</p>`;
+  }
+}
+
+document.getElementById("tickerLookupBtn").addEventListener("click", lookupAnyTicker);
+document.getElementById("tickerLookupInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") lookupAnyTicker();
+});
     renderHero(); renderAll();
   </script>
 </body>
